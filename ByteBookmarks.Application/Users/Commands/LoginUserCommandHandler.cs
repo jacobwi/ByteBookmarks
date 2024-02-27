@@ -12,6 +12,6 @@ public class LoginUserCommandHandler(IAuthService authService)
 {
     public async Task<AuthenticationResponse> Handle(LoginUserCommand request, CancellationToken cancellationToken)
     {
-        return await authService.LoginUser(request.user);
+        return await authService.LoginUser(request);
     }
 }

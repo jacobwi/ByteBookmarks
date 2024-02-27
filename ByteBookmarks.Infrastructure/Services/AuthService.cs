@@ -4,6 +4,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using ByteBookmarks.Application.Authentication;
+using ByteBookmarks.Application.Users.Commands;
 using ByteBookmarks.Core.Entities;
 using ByteBookmarks.Infrastructure.Contexts;
 using Microsoft.EntityFrameworkCore;
@@ -22,8 +23,9 @@ public class AuthService(IConfiguration configuration, DataContext context) : IA
         var claims = new List<Claim>
         {
             new(JwtRegisteredClaimNames.Sub, user.Id),
-            new(JwtRegisteredClaimNames.Email, user.Email)
-            // ... potentially add other claims for roles, etc. ...
+            new(JwtRegisteredClaimNames.Email, user.Email),
+            new (JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            new (ClaimTypes.Role, user.Role.ToString())
         };
 
         var key = new SymmetricSecurityKey(
@@ -45,7 +47,7 @@ public class AuthService(IConfiguration configuration, DataContext context) : IA
         });
     }
 
-    public async Task<AuthenticationResponse> RegisterUser(SignupDto userDto)
+    public async Task<AuthenticationResponse> RegisterUser(RegisterUserCommand userDto)
     {
         // Check for existing username
         if (await context.Users.AnyAsync(u => u.Username == userDto.Username))
@@ -59,9 +61,9 @@ public class AuthService(IConfiguration configuration, DataContext context) : IA
             Username = userDto.Username,
             Password = hashedPassword,
             Email = userDto.Email,
-            Id = Guid.NewGuid().ToString()
+            Id = Guid.NewGuid().ToString(),
+            Role = Role.Basic
 
-            // ... other properties
         };
 
         context.Users.Add(newUser);
@@ -70,7 +72,7 @@ public class AuthService(IConfiguration configuration, DataContext context) : IA
         return await GenerateJwtToken(newUser);
     }
 
-    public async Task<AuthenticationResponse> LoginUser(LoginDto userDto)
+    public async Task<AuthenticationResponse> LoginUser(LoginUserCommand userDto)
     {
         var user = await context.Users.FirstOrDefaultAsync(u => u.Username == userDto.Username);
 

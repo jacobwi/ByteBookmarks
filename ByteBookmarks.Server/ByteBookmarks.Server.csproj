@@ -27,11 +27,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Models\"/>
-        <Folder Include="Services\"/>
-    </ItemGroup>
-
-    <ItemGroup>
         <ProjectReference Include="..\ByteBookmarks.Application\ByteBookmarks.Application.csproj"/>
         <ProjectReference Include="..\ByteBookmarks.Infrastructure\ByteBookmarks.Infrastructure.csproj"/>
     </ItemGroup>

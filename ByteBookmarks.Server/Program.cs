@@ -1,8 +1,13 @@
 #region
 
+using System.Reflection;
 using System.Text;
+using ByteBookmarks.Application;
 using ByteBookmarks.Application.Authentication;
+using ByteBookmarks.Core.Entities;
+using ByteBookmarks.Core.Interfaces;
 using ByteBookmarks.Infrastructure.Contexts;
+using ByteBookmarks.Infrastructure.Repositories;
 using ByteBookmarks.Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -41,6 +46,13 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
+// Add repositories
+builder.Services.AddScoped<IBookmarkRepository, BookmarkRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+// Add MeditorR
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(IAuthService).Assembly));
+MappingConfiguration.Configure();
 
 var app = builder.Build();
 

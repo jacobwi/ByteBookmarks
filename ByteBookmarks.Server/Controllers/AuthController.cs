@@ -4,6 +4,7 @@ using ByteBookmarks.Application.Authentication;
 using ByteBookmarks.Application.Users.Commands;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Nelibur.ObjectMapper;
 using AuthenticationResponse = ByteBookmarks.Application.Authentication.AuthenticationResponse;
 
 #endregion
@@ -16,11 +17,14 @@ public class AuthController(IMediator mediator, IAuthService authService) : Cont
 
     // POST: api/Auth/login
     [HttpPost("login")]
-    public async Task<ActionResult<AuthenticationResponse>> Login([FromBody] LoginUserCommand command)
+    public async Task<ActionResult<AuthenticationResponse>> Login([FromBody] LoginDto userLogin)
+
     {
         try
         {
-            var response = await mediator.Send(command);
+            var loginCommand = TinyMapper.Map<LoginUserCommand>(userLogin);
+
+            var response = await mediator.Send(loginCommand);
             return Ok(response);
         }
         catch (Exception ex)
@@ -31,11 +35,13 @@ public class AuthController(IMediator mediator, IAuthService authService) : Cont
 
     // POST: api/Auth/register
     [HttpPost("register")]
-    public async Task<ActionResult<AuthenticationResponse>> Register([FromBody] RegisterUserCommand command)
+    public async Task<ActionResult<AuthenticationResponse>> Register([FromBody] SignupDto  newUser)
     {
         try
         {
-            var response = await mediator.Send(command);
+            var signupCommand = TinyMapper.Map<RegisterUserCommand>(newUser);
+
+            var response = await mediator.Send(signupCommand);
             return Ok(response); // Consider returning CreatedAtAction
         }
         catch (Exception ex)

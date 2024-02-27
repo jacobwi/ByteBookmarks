@@ -9,5 +9,6 @@ namespace ByteBookmarks.Application.Users.Commands;
 
 public class LoginUserCommand : IRequest<AuthenticationResponse>
 {
-    public LoginDto user { get; set; }
+    public string Username { get; set; }
+    public string Password { get; set; }
 }
