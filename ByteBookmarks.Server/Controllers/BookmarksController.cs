@@ -21,7 +21,8 @@ public class BookmarksController(IMediator mediator, DataContext context) : Cont
     [HttpGet]
     public async Task<ActionResult<IEnumerable<BookmarkDto>>> GetBookmarks()
     {
-        var query = new GetBookmarksQuery(User.Identity.Name);
+        var id = User?.FindFirstValue(ClaimTypes.NameIdentifier);
+        var query = new GetBookmarksQuery(id);
         var bookmarks = await mediator.Send(query);
         return Ok(bookmarks);
     }
@@ -40,9 +41,20 @@ public class BookmarksController(IMediator mediator, DataContext context) : Cont
 
     // POST: api/Bookmarks
     [HttpPost]
-    public async Task<ActionResult<BookmarkDto>> CreateBookmark(CreateBookmarkCommand command)
+    public async Task<ActionResult<BookmarkDto>> CreateBookmark(NewBookmarkDto newBookmark)
     {
-        command.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+        // Create command
+        var command = new CreateBookmarkCommand
+        {
+            Title = newBookmark.Title,
+            URL = newBookmark.URL,
+            Description = newBookmark.Description,
+            IsPasswordProtected = newBookmark.IsPasswordProtected,
+            Password = newBookmark.Password,
+            Image = newBookmark.Image,
+            UserId = User.FindFirstValue(ClaimTypes.NameIdentifier)
+        };
         var createdBookmark = await mediator.Send(command);
 
         return CreatedAtAction("GetBookmark", new { id = createdBookmark.Id }, createdBookmark);

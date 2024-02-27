@@ -11,6 +11,21 @@ namespace ByteBookmarks.Infrastructure.Repositories;
 
 public class BookmarkRepository(DataContext context) : IBookmarkRepository
 {
+    public async Task<IEnumerable<Bookmark>> GetBookmarksByUserIdAsync(string userId)
+    {
+        return await context.Bookmarks
+            .Where(b => b.UserId == userId)
+            .Include(i => i.Image)
+            .ToListAsync();
+    }
+
+    public async Task<IEnumerable<Bookmark>> GetBookmarksByUsernameAsync(string username)
+    {
+        return await context.Bookmarks
+            .Where(b => b.User.Username == username)
+            .ToListAsync();
+    }
+
     public async Task<Bookmark> GetBookmarkByIdAsync(int id)
     {
         return await context.Bookmarks

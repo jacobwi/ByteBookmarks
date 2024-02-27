@@ -35,7 +35,7 @@ public class AuthController(IMediator mediator, IAuthService authService) : Cont
 
     // POST: api/Auth/register
     [HttpPost("register")]
-    public async Task<ActionResult<AuthenticationResponse>> Register([FromBody] SignupDto  newUser)
+    public async Task<ActionResult<AuthenticationResponse>> Register([FromBody] SignupDto newUser)
     {
         try
         {

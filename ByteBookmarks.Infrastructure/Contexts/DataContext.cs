@@ -11,4 +11,5 @@ public class DataContext(DbContextOptions<DataContext> options) : DbContext(opti
 {
     public DbSet<ApplicationUser> Users { get; set; }
     public DbSet<Bookmark> Bookmarks { get; set; }
+    public DbSet<Image> Images { get; set; }
 }

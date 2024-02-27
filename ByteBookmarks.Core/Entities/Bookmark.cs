@@ -12,6 +12,9 @@ public class Bookmark
     public bool IsPasswordProtected { get; set; }
     public string Password { get; set; }
 
+    public int ImageId { get; set; }
+    public Image Image { get; set; } // Navigation property 
+
     public ICollection<BookmarkTag> BookmarkTags { get; set; }
     public ICollection<BookmarkCategory> BookmarkCategories { get; set; }
     public string Description { get; set; }

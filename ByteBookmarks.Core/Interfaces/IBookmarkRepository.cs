@@ -8,6 +8,9 @@ namespace ByteBookmarks.Core.Interfaces;
 
 public interface IBookmarkRepository
 {
+    Task<IEnumerable<Bookmark>> GetBookmarksByUserIdAsync(string userId);
+    Task<IEnumerable<Bookmark>> GetBookmarksByUsernameAsync(string username);
+
     Task<Bookmark> GetBookmarkByIdAsync(int id);
     Task AddBookmarkAsync(Bookmark bookmark);
     Task DeleteBookmarkAsync(Bookmark bookmark);

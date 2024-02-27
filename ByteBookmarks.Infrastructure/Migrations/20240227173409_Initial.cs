@@ -49,6 +49,7 @@ namespace ByteBookmarks.Infrastructure.Migrations
                     UserId = table.Column<string>(type: "TEXT", nullable: false),
                     IsPasswordProtected = table.Column<bool>(type: "INTEGER", nullable: false),
                     Password = table.Column<string>(type: "TEXT", nullable: false),
+                    ImageId = table.Column<int>(type: "INTEGER", nullable: false),
                     Description = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
@@ -109,6 +110,39 @@ namespace ByteBookmarks.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Images",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(type: "TEXT", nullable: false),
+                    RelationshipType = table.Column<int>(type: "INTEGER", nullable: false),
+                    StoreType = table.Column<int>(type: "INTEGER", nullable: false),
+                    Path = table.Column<string>(type: "TEXT", nullable: false),
+                    Extension = table.Column<string>(type: "TEXT", nullable: false),
+                    ContentType = table.Column<string>(type: "TEXT", nullable: false),
+                    Size = table.Column<long>(type: "INTEGER", nullable: false),
+                    UserId = table.Column<string>(type: "TEXT", nullable: false),
+                    BookmarkId = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Images", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Images_Bookmarks_BookmarkId",
+                        column: x => x.BookmarkId,
+                        principalTable: "Bookmarks",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Images_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "BookmarkCategory",
                 columns: table => new
                 {
@@ -163,6 +197,17 @@ namespace ByteBookmarks.Infrastructure.Migrations
                 name: "IX_Category_UserId",
                 table: "Category",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Images_BookmarkId",
+                table: "Images",
+                column: "BookmarkId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Images_UserId",
+                table: "Images",
+                column: "UserId");
         }
 
         /// <inheritdoc />
@@ -175,13 +220,16 @@ namespace ByteBookmarks.Infrastructure.Migrations
                 name: "BookmarkTag");
 
             migrationBuilder.DropTable(
+                name: "Images");
+
+            migrationBuilder.DropTable(
                 name: "Category");
 
             migrationBuilder.DropTable(
-                name: "Bookmarks");
+                name: "Tag");
 
             migrationBuilder.DropTable(
-                name: "Tag");
+                name: "Bookmarks");
 
             migrationBuilder.DropTable(
                 name: "Users");

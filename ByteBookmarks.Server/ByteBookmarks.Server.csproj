@@ -31,4 +31,8 @@
         <ProjectReference Include="..\ByteBookmarks.Infrastructure\ByteBookmarks.Infrastructure.csproj"/>
     </ItemGroup>
 
+    <ItemGroup>
+      <None Remove="secureapi.db-shm" />
+    </ItemGroup>
+
 </Project>

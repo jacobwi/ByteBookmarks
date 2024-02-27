@@ -22,10 +22,11 @@ public class AuthService(IConfiguration configuration, DataContext context) : IA
     {
         var claims = new List<Claim>
         {
-            new(JwtRegisteredClaimNames.Sub, user.Id),
-            new(JwtRegisteredClaimNames.Email, user.Email),
-            new (JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new (ClaimTypes.Role, user.Role.ToString())
+            new(ClaimTypes.NameIdentifier, user.Id),
+            new(ClaimTypes.Upn, user.Username),
+            new(ClaimTypes.Email, user.Email),
+            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            new(ClaimTypes.Role, user.Role.ToString())
         };
 
         var key = new SymmetricSecurityKey(
@@ -63,7 +64,6 @@ public class AuthService(IConfiguration configuration, DataContext context) : IA
             Email = userDto.Email,
             Id = Guid.NewGuid().ToString(),
             Role = Role.Basic
-
         };
 
         context.Users.Add(newUser);
