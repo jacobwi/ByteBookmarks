@@ -4,11 +4,6 @@ using System.Security.Claims;
 using ByteBookmarks.Application.Bookmarks.Commands;
 using ByteBookmarks.Application.Bookmarks.DTOs;
 using ByteBookmarks.Application.Bookmarks.Queries;
-using ByteBookmarks.Infrastructure.Contexts;
-using MediatR;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 #endregion
 

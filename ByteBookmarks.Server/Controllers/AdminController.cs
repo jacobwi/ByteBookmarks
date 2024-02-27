@@ -1,11 +1,7 @@
 #region
 
 using ByteBookmarks.Application.Admin.Queries;
-using ByteBookmarks.Application.Users.Commands;
 using ByteBookmarks.Core.Entities;
-using MediatR;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 
 #endregion
 

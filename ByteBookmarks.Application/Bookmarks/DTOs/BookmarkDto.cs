@@ -1,7 +1,5 @@
 #region
 
-using Microsoft.AspNetCore.Http;
-
 #endregion
 
 namespace ByteBookmarks.Application.Bookmarks.DTOs;

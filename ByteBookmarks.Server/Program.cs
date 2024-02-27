@@ -2,17 +2,12 @@
 
 using System.Text;
 using ByteBookmarks.Application;
-using ByteBookmarks.Application.Authentication;
 using ByteBookmarks.Core.Interfaces;
-using ByteBookmarks.Infrastructure.Contexts;
 using ByteBookmarks.Infrastructure.Repositories;
 using ByteBookmarks.Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-
-// If using EF Core
 
 #endregion
 
@@ -22,11 +17,29 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllers();
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(opt =>
 {
-    opt.SwaggerDoc("v1", new OpenApiInfo { Title = "MyAPI", Version = "v1" });
+    // Add info from configuration file
+    opt.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = builder.Configuration["Swagger:Title"],
+        Version = builder.Configuration["Swagger:Version"],
+        Description = builder.Configuration["Swagger:Description"],
+        Contact = new OpenApiContact
+        {
+            Name = builder.Configuration["Swagger:Contact:Name"],
+            Email = builder.Configuration["Swagger:Contact:Email"],
+            Url = new Uri(builder.Configuration["Swagger:Contact:Url"])
+        },
+        License = builder.Configuration["Swagger:License"] == null
+            ? null
+            : new OpenApiLicense
+            {
+                Name = builder.Configuration["Swagger:License:Name"],
+                Url = new Uri(builder.Configuration["Swagger:License:Url"])
+            }
+    });
     opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         In = ParameterLocation.Header,
@@ -48,10 +61,11 @@ builder.Services.AddSwaggerGen(opt =>
                     Id = "Bearer"
                 }
             },
-            new string[] { }
+            Array.Empty<string>()
         }
     });
 });
+
 // Database Context (if using EF Core)
 builder.Services.AddDbContext<DataContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -76,23 +90,50 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddScoped<IBookmarkRepository, BookmarkRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IImageRepository, ImageRepository>();
+
+// Add Services
 builder.Services.AddScoped<IImageStorageService, LocalImageStorageService>();
+builder.Services.AddSingleton<IEmailService, EmailService>();
 builder.Services.AddScoped<ImageService>();
+
 // Add MeditorR
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(IAuthService).Assembly));
 MappingConfiguration.Configure();
+
+// Parse cors values from configuration then add cors
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(
-        builder =>
+    options.AddPolicy(builder.Configuration["CORS:PolicyName"],
+        cb =>
         {
-            builder.WithOrigins("http://localhost:4000")
-                .AllowAnyHeader()
-                .AllowAnyMethod();
+            if (bool.Parse(builder.Configuration["CORS:AllowAnyOrigin"]))
+                cb.AllowAnyOrigin();
+            else
+                cb.WithOrigins(builder.Configuration["CORS:AllowedOrigins"].Split(','));
+
+            if (bool.Parse(builder.Configuration["CORS:AllowAnyMethod"]))
+                cb.AllowAnyMethod();
+            else
+                cb.WithMethods(builder.Configuration["CORS:AllowedMethods"].Split(','));
+
+            if (bool.Parse(builder.Configuration["CORS:AllowAnyHeader"]))
+                cb.AllowAnyHeader();
+            else
+                cb.WithHeaders(builder.Configuration["CORS:AllowedHeaders"].Split(','));
+
+            if (bool.Parse(builder.Configuration["CORS:AllowCredentials"]) &&
+                !bool.Parse(builder.Configuration["CORS:AllowAnyOrigin"]))
+                cb.AllowCredentials();
+            else
+                cb.DisallowCredentials();
         });
 });
+
 var app = builder.Build();
-app.UseCors();
+
+// Configure CORS policy
+app.UseCors(builder.Configuration["CORS:PolicyName"]);
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

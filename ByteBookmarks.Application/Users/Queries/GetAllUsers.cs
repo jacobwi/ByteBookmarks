@@ -1,8 +1,5 @@
 #region
 
-using ByteBookmarks.Core.Entities;
-using MediatR;
-
 #endregion
 
 namespace ByteBookmarks.Application.Admin.Queries;

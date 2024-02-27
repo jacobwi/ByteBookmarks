@@ -1,9 +1,5 @@
 #region
 
-using ByteBookmarks.Core.Entities;
-using ByteBookmarks.Core.Interfaces;
-using Microsoft.Extensions.Configuration;
-
 #endregion
 
 namespace ByteBookmarks.Infrastructure.Services;

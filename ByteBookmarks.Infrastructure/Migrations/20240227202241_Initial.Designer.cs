@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ByteBookmarks.Infrastructure.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240227173409_Initial")]
+    [Migration("20240227202241_Initial")]
     partial class Initial
     {
         /// <inheritdoc />

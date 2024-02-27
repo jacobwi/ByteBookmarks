@@ -1,9 +1,5 @@
 #region
 
-using ByteBookmarks.Application.Bookmarks.DTOs;
-using ByteBookmarks.Core.Interfaces;
-using MediatR;
-
 #endregion
 
 namespace ByteBookmarks.Application.Bookmarks.Queries;

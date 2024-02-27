@@ -1,9 +1,6 @@
 #region
 
-using ByteBookmarks.Application.Authentication;
 using ByteBookmarks.Application.Bookmarks.Commands;
-using ByteBookmarks.Application.Bookmarks.DTOs;
-using ByteBookmarks.Application.Users.Commands;
 using Nelibur.ObjectMapper;
 
 #endregion

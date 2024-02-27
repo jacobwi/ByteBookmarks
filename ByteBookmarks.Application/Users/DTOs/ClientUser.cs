@@ -1,7 +1,5 @@
 #region
 
-using ByteBookmarks.Core.Entities;
-
 #endregion
 
 namespace ByteBookmarks.Application.Authentication;

@@ -1,9 +1,5 @@
 #region
 
-using ByteBookmarks.Application.Authentication;
-using ByteBookmarks.Application.Users.Commands;
-using MediatR;
-using Microsoft.AspNetCore.Mvc;
 using Nelibur.ObjectMapper;
 using AuthenticationResponse = ByteBookmarks.Application.Authentication.AuthenticationResponse;
 

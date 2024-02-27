@@ -1,10 +1,5 @@
 #region
 
-using ByteBookmarks.Core.Entities;
-using ByteBookmarks.Core.Interfaces;
-using ByteBookmarks.Infrastructure.Contexts;
-using Microsoft.EntityFrameworkCore;
-
 #endregion
 
 namespace ByteBookmarks.Infrastructure.Repositories;

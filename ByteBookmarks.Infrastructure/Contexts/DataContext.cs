@@ -1,8 +1,5 @@
 #region
 
-using ByteBookmarks.Core.Entities;
-using Microsoft.EntityFrameworkCore;
-
 #endregion
 
 namespace ByteBookmarks.Infrastructure.Contexts;

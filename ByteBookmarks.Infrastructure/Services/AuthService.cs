@@ -5,10 +5,6 @@ using System.Security.Claims;
 using System.Text;
 using ByteBookmarks.Application.Authentication;
 using ByteBookmarks.Application.Users.Commands;
-using ByteBookmarks.Core.Entities;
-using ByteBookmarks.Infrastructure.Contexts;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using AuthenticationResponse = ByteBookmarks.Application.Authentication.AuthenticationResponse;
 

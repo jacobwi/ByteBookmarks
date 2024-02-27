@@ -1,8 +1,5 @@
 #region
 
-using ByteBookmarks.Application.Authentication;
-using ByteBookmarks.Core.Interfaces;
-using MediatR;
 using AuthenticationResponse = ByteBookmarks.Application.Authentication.AuthenticationResponse;
 
 #endregion

@@ -1,9 +1,5 @@
 #region
 
-using ByteBookmarks.Application.Bookmarks.DTOs;
-using MediatR;
-using Microsoft.AspNetCore.Http;
-
 #endregion
 
 namespace ByteBookmarks.Application.Bookmarks.Commands;

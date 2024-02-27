@@ -1,8 +1,5 @@
 #region
 
-using ByteBookmarks.Core.Interfaces;
-using MediatR;
-
 #endregion
 
 namespace ByteBookmarks.Application.Bookmarks.Commands;
