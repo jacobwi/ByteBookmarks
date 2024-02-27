@@ -18,11 +18,11 @@ public class AuthService(IConfiguration configuration, DataContext context) : IA
     {
         var claims = new List<Claim>
         {
-            new(ClaimTypes.NameIdentifier, user.Id),
-            new(ClaimTypes.Upn, user.Username),
-            new(ClaimTypes.Email, user.Email),
+            new(JwtRegisteredClaimNames.UniqueName, user.Username),
+            new(JwtRegisteredClaimNames.Email, user.Email),
+            new(JwtRegisteredClaimNames.Iat, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString()),
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new(ClaimTypes.Role, user.Role.ToString())
+            new("role", user.Role.ToString())
         };
 
         var key = new SymmetricSecurityKey(
@@ -33,7 +33,7 @@ public class AuthService(IConfiguration configuration, DataContext context) : IA
             configuration["Jwt:Issuer"],
             configuration["Jwt:Audience"],
             claims,
-            expires: DateTime.Now.AddDays(1),
+            expires: DateTime.UtcNow.AddDays(1),
             signingCredentials: signingCredentials
         );
 
