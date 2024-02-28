@@ -4,9 +4,9 @@ public class Category
 {
     public int Id { get; set; }
     public string Name { get; set; }
+    public string UserId { get; set; } // Foreign key to ApplicationUser
 
-    public string UserId { get; set; }
-    public ApplicationUser User { get; set; }
-
-    public ICollection<BookmarkCategory> BookmarkCategories { get; set; }
+    // Navigation properties
+    public virtual ApplicationUser User { get; set; }
+    public virtual ICollection<Bookmark> Bookmarks { get; set; } = new List<Bookmark>();
 }

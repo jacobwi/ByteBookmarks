@@ -40,13 +40,16 @@ public class CreateBookmarkCommandHandler(
             // // Save the file path or any other relevant information in your database
         }
 
+        // Hash password if provided
+        if (request.IsPasswordProtected) request.Password = BCrypt.Net.BCrypt.HashPassword(request.Password);
+
         var bookmark = new Bookmark
         {
             Title = request.Title,
             URL = request.URL,
             Description = request.Description,
             IsPasswordProtected = request.IsPasswordProtected,
-            Password = request.Password,
+            PasswordHash = request.Password,
             UserId = request.UserId,
             Image = image,
             ImageId = image?.Id ?? 0

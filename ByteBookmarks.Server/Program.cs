@@ -1,5 +1,6 @@
 #region
 
+using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using ByteBookmarks.Application;
 using ByteBookmarks.Core.Interfaces;
@@ -18,6 +19,18 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
+
+
+// Swagger
+
+// Get sec scheme
+var securitySchemeType = builder.Configuration["Jwt:Type"] switch
+{
+    "http" => SecuritySchemeType.Http,
+    "apiKey" => SecuritySchemeType.ApiKey,
+    "oauth2" => SecuritySchemeType.OAuth2,
+    _ => SecuritySchemeType.Http // Default case
+};
 builder.Services.AddSwaggerGen(opt =>
 {
     // Add info from configuration file
@@ -45,7 +58,7 @@ builder.Services.AddSwaggerGen(opt =>
         In = ParameterLocation.Header,
         Description = "Please enter token",
         Name = "Authorization",
-        Type = SecuritySchemeType.Http,
+        Type = securitySchemeType,
         BearerFormat = "JWT",
         Scheme = "bearer"
     });
@@ -74,15 +87,26 @@ builder.Services.AddDbContext<DataContext>(options =>
 builder.Services.AddScoped<IAuthService, AuthService>();
 
 // Authentication Configuration
+// Get JWT preferences from configuration
+var jwtConfig = builder.Configuration.GetSection("Jwt");
+
+// Add JWT authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
         options.TokenValidationParameters = new TokenValidationParameters
         {
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
-            ValidateIssuer = false, // Adjust for your use case
-            ValidateAudience = false // Adjust for your use case
+            ValidateIssuer = true,
+            ValidateAudience = jwtConfig["ValidateAudience"] == "true",
+            ValidateLifetime = jwtConfig["ValidateLifetime"] == "true",
+            ValidateIssuerSigningKey = jwtConfig["ValidateIssuerSigningKey"] == "true",
+            ValidIssuer = jwtConfig["Issuer"],
+            ValidAudience = jwtConfig["Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(jwtConfig["Key"])),
+            ClockSkew = TimeSpan.FromMinutes(2),
+            RoleClaimType = "role",
+            NameClaimType = JwtRegisteredClaimNames.Sub
         };
     });
 

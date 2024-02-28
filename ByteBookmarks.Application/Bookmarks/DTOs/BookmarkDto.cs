@@ -26,4 +26,7 @@ public class BookmarkDto
 
     public string Password { get; set; } = string.Empty;
     public string Image { get; set; }
+
+    public IEnumerable<Tag> Tags { get; set; }
+    public IEnumerable<Category> Categories { get; set; }
 }

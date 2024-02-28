@@ -11,6 +11,7 @@ public class BookmarkRepository(DataContext context) : IBookmarkRepository
         return await context.Bookmarks
             .Where(b => b.UserId == userId)
             .Include(i => i.Image)
+            .Include(t => t.Tags).Include(c => c.Categories) // Example: Include related tags
             .ToListAsync();
     }
 
@@ -18,13 +19,16 @@ public class BookmarkRepository(DataContext context) : IBookmarkRepository
     {
         return await context.Bookmarks
             .Where(b => b.User.Username == username)
+            .Include(i => i.Image)
+            .Include(t => t.Tags).Include(c => c.Categories) // Example: Include related tags
             .ToListAsync();
     }
 
     public async Task<Bookmark> GetBookmarkByIdAsync(int id)
     {
         return await context.Bookmarks
-            .Include(b => b.BookmarkTags) // Example: Include related tags
+            .Include(i => i.Image)
+            .Include(t => t.Tags).Include(c => c.Categories) // Example: Include related tags
             .FirstOrDefaultAsync(b => b.Id == id);
     }
 
@@ -42,6 +46,7 @@ public class BookmarkRepository(DataContext context) : IBookmarkRepository
 
     public async Task UpdateBookmarkAsync(Bookmark bookmark, CancellationToken cancellationToken)
     {
+        context.Bookmarks.Update(bookmark);
         await context.SaveChangesAsync(cancellationToken);
     }
 }

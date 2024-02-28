@@ -103,4 +103,26 @@ public class BookmarksController(IMediator mediator, DataContext context) : Cont
         // Implement logic using your DataContext to check if the bookmark exists
         return context.Bookmarks.Any(b => b.Id == id);
     }
+
+    // Add tag to bookmark
+    [HttpPost("{id}/tag")]
+    public async Task<IActionResult> AddTagToBookmark(int id, AddTagToBookmarkCommand command)
+    {
+        if (id != command.BookmarkId) return BadRequest();
+
+        if (command.UserId != User.FindFirstValue("userId")) return Unauthorized();
+
+        try
+        {
+            await mediator.Send(command);
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!BookmarkExists(id))
+                return NotFound();
+            throw;
+        }
+
+        return NoContent();
+    }
 }

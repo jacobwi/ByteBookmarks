@@ -13,10 +13,6 @@ public class GetBookmarksQueryHandler(IBookmarkRepository bookmarkRepository)
         var bookmarks =
             await bookmarkRepository.GetBookmarksByUserIdAsync(request.UserId); // Update with your repository call
 
-        // 2. Map the bookmarks to BookmarkDto objects
-
-        // 3. Get Image
-
 
         var tasks = bookmarks.Select(async bookmark =>
         {
@@ -28,7 +24,9 @@ public class GetBookmarksQueryHandler(IBookmarkRepository bookmarkRepository)
                 URL = bookmark.URL,
                 Description = bookmark.Description,
                 IsPasswordProtected = bookmark.IsPasswordProtected,
-                Image = image
+                Image = image,
+                Tags = bookmark.Tags,
+                Categories = bookmark.Categories
                 // ... map other properties as needed
             };
         });
