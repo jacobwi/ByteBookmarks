@@ -18,10 +18,12 @@ public class AuthService(IConfiguration configuration, DataContext context) : IA
     {
         var claims = new List<Claim>
         {
+            new("userId", user.Id),
             new(JwtRegisteredClaimNames.UniqueName, user.Username),
             new(JwtRegisteredClaimNames.Email, user.Email),
             new(JwtRegisteredClaimNames.Iat, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString()),
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+
             new("role", user.Role.ToString())
         };
 

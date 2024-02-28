@@ -4,14 +4,8 @@
 
 namespace ByteBookmarks.Application.Bookmarks.Queries;
 
-public class GetBookmarkByIdQuery : IRequest<BookmarkDto>
+public class GetBookmarkByIdQuery(int id, string userId) : IRequest<BookmarkDto>
 {
-    public GetBookmarkByIdQuery(int id, string userId)
-    {
-        Id = id;
-        UserId = userId;
-    }
-
-    public int Id { get; set; }
-    public string UserId { get; set; }
+    public int Id { get; set; } = id;
+    public string UserId { get; set; } = userId;
 }

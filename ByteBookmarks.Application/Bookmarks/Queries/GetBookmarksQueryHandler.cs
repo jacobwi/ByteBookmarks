@@ -4,20 +4,14 @@
 
 namespace ByteBookmarks.Application.Bookmarks.Queries;
 
-public class GetBookmarksQueryHandler : IRequestHandler<GetBookmarksQuery, IEnumerable<BookmarkDto>>
+public class GetBookmarksQueryHandler(IBookmarkRepository bookmarkRepository)
+    : IRequestHandler<GetBookmarksQuery, IEnumerable<BookmarkDto>>
 {
-    private readonly IBookmarkRepository _bookmarkRepository;
-
-    public GetBookmarksQueryHandler(IBookmarkRepository bookmarkRepository)
-    {
-        _bookmarkRepository = bookmarkRepository;
-    }
-
     public async Task<IEnumerable<BookmarkDto>> Handle(GetBookmarksQuery request, CancellationToken cancellationToken)
     {
         // 1. Fetch bookmarks 
         var bookmarks =
-            await _bookmarkRepository.GetBookmarksByUserIdAsync(request.UserId); // Update with your repository call
+            await bookmarkRepository.GetBookmarksByUserIdAsync(request.UserId); // Update with your repository call
 
         // 2. Map the bookmarks to BookmarkDto objects
 

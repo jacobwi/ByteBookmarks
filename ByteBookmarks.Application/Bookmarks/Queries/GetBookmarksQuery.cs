@@ -4,12 +4,7 @@
 
 namespace ByteBookmarks.Application.Bookmarks.Queries;
 
-public class GetBookmarksQuery : IRequest<IEnumerable<BookmarkDto>>
+public class GetBookmarksQuery(string userId) : IRequest<IEnumerable<BookmarkDto>>
 {
-    public GetBookmarksQuery(string userId)
-    {
-        UserId = userId;
-    }
-
-    public string UserId { get; set; } // Or get directly from authentication context
+    public string UserId { get; set; } = userId; // Or get directly from authentication context
 }

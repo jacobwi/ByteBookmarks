@@ -16,7 +16,7 @@ public class BookmarksController(IMediator mediator, DataContext context) : Cont
     [HttpGet]
     public async Task<ActionResult<IEnumerable<BookmarkDto>>> GetBookmarks()
     {
-        var id = User?.FindFirstValue(ClaimTypes.NameIdentifier);
+        var id = User?.FindFirstValue("userId");
         var query = new GetBookmarksQuery(id);
         var bookmarks = await mediator.Send(query);
         return Ok(bookmarks);
@@ -26,7 +26,7 @@ public class BookmarksController(IMediator mediator, DataContext context) : Cont
     [HttpGet("{id}")]
     public async Task<ActionResult<BookmarkDto>> GetBookmark(int id)
     {
-        var query = new GetBookmarkByIdQuery(id, User.Identity.Name);
+        var query = new GetBookmarkByIdQuery(id, User.FindFirstValue("userId"));
         var bookmark = await mediator.Send(query);
 
         if (bookmark == null) return NotFound();
@@ -48,7 +48,7 @@ public class BookmarksController(IMediator mediator, DataContext context) : Cont
             IsPasswordProtected = newBookmark.IsPasswordProtected,
             Password = newBookmark.Password,
             Image = newBookmark.Image,
-            UserId = User.FindFirstValue(ClaimTypes.NameIdentifier)
+            UserId = User.FindFirstValue("userId")
         };
         var createdBookmark = await mediator.Send(command);
 
@@ -61,7 +61,7 @@ public class BookmarksController(IMediator mediator, DataContext context) : Cont
     {
         if (id != command.Id) return BadRequest();
 
-        command.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        command.UserId = User.FindFirstValue("userId");
 
         try
         {
@@ -81,7 +81,7 @@ public class BookmarksController(IMediator mediator, DataContext context) : Cont
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteBookmark(int id)
     {
-        var command = new DeleteBookmarkCommand(id, User.FindFirstValue(ClaimTypes.NameIdentifier));
+        var command = new DeleteBookmarkCommand(id, User.FindFirstValue("userId"));
 
         try
         {

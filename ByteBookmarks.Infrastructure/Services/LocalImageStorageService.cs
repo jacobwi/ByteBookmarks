@@ -49,7 +49,7 @@ public class LocalImageStorageService : IImageStorageService
         // Example: Store based on relationship type and further subdirectories
         var folder = Path.Combine(_rootFolder, image.RelationshipType.ToString());
         Directory.CreateDirectory(folder); // Ensure the folder exists
-        return Path.Combine(folder, image.Id + Path.GetExtension(image.Name));
+        return Path.Combine(folder, Guid.NewGuid() + Path.GetExtension(image.Name));
     }
 
     // Helper to get the file path based on an existing image ID
