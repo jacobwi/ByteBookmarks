@@ -16,10 +16,18 @@ public class BookmarksController(IMediator mediator, DataContext context) : Cont
     [HttpGet]
     public async Task<ActionResult<IEnumerable<BookmarkDto>>> GetBookmarks()
     {
-        var id = User?.FindFirstValue("userId");
-        var query = new GetBookmarksQuery(id);
-        var bookmarks = await mediator.Send(query);
-        return Ok(bookmarks);
+        try
+        {
+            var id = User?.FindFirstValue("userId");
+            var query = new GetBookmarksQuery(id);
+            var bookmarks = await mediator.Send(query);
+            return Ok(bookmarks);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 
     // GET: api/Bookmarks/5
@@ -105,10 +113,10 @@ public class BookmarksController(IMediator mediator, DataContext context) : Cont
     }
 
     // Add tag to bookmark
-    [HttpPost("{id}/tag")]
-    public async Task<IActionResult> AddTagToBookmark(int id, AddTagToBookmarkCommand command)
+    [HttpPost("{bookmarkId}/tag")]
+    public async Task<IActionResult> AddTagToBookmark(int bookmarkId, [FromBody] AddTagToBookmarkCommand command)
     {
-        if (id != command.BookmarkId) return BadRequest();
+        if (bookmarkId != command.BookmarkId) return BadRequest();
 
         if (command.UserId != User.FindFirstValue("userId")) return Unauthorized();
 
@@ -118,7 +126,7 @@ public class BookmarksController(IMediator mediator, DataContext context) : Cont
         }
         catch (DbUpdateConcurrencyException)
         {
-            if (!BookmarkExists(id))
+            if (!BookmarkExists(bookmarkId))
                 return NotFound();
             throw;
         }

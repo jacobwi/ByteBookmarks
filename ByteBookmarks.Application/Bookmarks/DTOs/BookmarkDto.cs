@@ -22,11 +22,11 @@ public class BookmarkDto
     public string Title { get; set; }
     public string URL { get; set; }
     public string Description { get; set; }
-    public bool IsPasswordProtected { get; set; } = false;
+    public bool IsPasswordProtected { get; set; }
+    public int? ImageId { get; set; }
 
-    public string Password { get; set; } = string.Empty;
-    public string Image { get; set; }
-
-    public IEnumerable<Tag> Tags { get; set; }
-    public IEnumerable<Category> Categories { get; set; }
+    // Related entities represented by their IDs or simplified DTOs
+    public BookmarkImageDto Image { get; set; }
+    public ICollection<BookmarkTagDto> Tags { get; set; }
+    public ICollection<BookmarkCategoryDto> Categories { get; set; }
 }

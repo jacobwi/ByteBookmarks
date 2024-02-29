@@ -2,6 +2,12 @@
 
 #endregion
 
+#region
+
+using Nelibur.ObjectMapper;
+
+#endregion
+
 namespace ByteBookmarks.Application.Bookmarks.Queries;
 
 public class GetBookmarksQueryHandler(IBookmarkRepository bookmarkRepository)
@@ -13,26 +19,28 @@ public class GetBookmarksQueryHandler(IBookmarkRepository bookmarkRepository)
         var bookmarks =
             await bookmarkRepository.GetBookmarksByUserIdAsync(request.UserId); // Update with your repository call
 
-
-        var tasks = bookmarks.Select(async bookmark =>
+        // Map each Bookmark to BookmarkDto
+        var bookmarkDtoTasks = bookmarks.Select(async bookmark =>
         {
-            var image = await GetBase64ImageAsync(bookmark.Image.Path);
-            return new BookmarkDto
-            {
-                Id = bookmark.Id,
-                Title = bookmark.Title,
-                URL = bookmark.URL,
-                Description = bookmark.Description,
-                IsPasswordProtected = bookmark.IsPasswordProtected,
-                Image = image,
-                Tags = bookmark.Tags,
-                Categories = bookmark.Categories
-                // ... map other properties as needed
-            };
-        });
+            // Use TinyMapper for the direct properties
+            var dto = TinyMapper.Map<BookmarkDto>(bookmark);
 
-        var item = await Task.WhenAll(tasks);
-        return item;
+            // Manually map the Image property if it exists
+            if (bookmark.Image != null) dto.Image.Base64Data = await GetBase64ImageAsync(bookmark.Image.Path);
+
+
+            // // Manually map the Tags collection
+            // dto.Tags = bookmark.Tags.Select(tag => TinyMapper.Map<BookmarkTagDto>(tag)).ToList();
+            //
+            // // Manually map the Categories collection
+            // dto.Categories = bookmark.Categories.Select(category => TinyMapper.Map<BookmarkCategoryDto>(category))
+            //     .ToList();
+
+            return dto;
+        }).ToList();
+        var bookmarkDtos = await Task.WhenAll(bookmarkDtoTasks);
+
+        return bookmarkDtos;
     }
 
     private async Task<string> GetBase64ImageAsync(string imagePath)

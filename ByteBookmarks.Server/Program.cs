@@ -9,6 +9,7 @@ using ByteBookmarks.Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json;
 
 #endregion
 
@@ -16,7 +17,10 @@ using Microsoft.OpenApi.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddNewtonsoftJson(options =>
+{
+    options.SerializerSettings.PreserveReferencesHandling = PreserveReferencesHandling.None;
+});
 
 builder.Services.AddEndpointsApiExplorer();
 

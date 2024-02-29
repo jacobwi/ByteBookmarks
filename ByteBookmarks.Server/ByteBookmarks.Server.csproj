@@ -37,8 +37,4 @@
         <None Remove="secureapi.db-shm"/>
     </ItemGroup>
 
-    <ItemGroup>
-        <Folder Include="ImageUploads\"/>
-    </ItemGroup>
-
 </Project>

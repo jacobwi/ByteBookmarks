@@ -6,5 +6,4 @@ public interface IEmailService
     Task SendEmailConfirmationAsync(string email, string link);
     Task SendPasswordResetAsync(string email, string link);
     Task EmailShareBookmarkAsync(string email, string link);
-    
 }
