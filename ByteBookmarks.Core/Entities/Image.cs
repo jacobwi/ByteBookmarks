@@ -16,7 +16,10 @@ public class Image
     public string Extension { get; set; }
     public string ContentType { get; set; }
     public long Size { get; set; }
+
+    [ForeignKey("User")] // Name of the navigation property
     public string UserId { get; set; }
+
     public ApplicationUser User { get; set; }
 
     [ForeignKey("Bookmark")] // Name of the navigation property

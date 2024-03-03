@@ -3,10 +3,13 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using ByteBookmarks.Application;
+using ByteBookmarks.Core.Entities;
+using ByteBookmarks.Core.Exceptions;
 using ByteBookmarks.Core.Interfaces;
 using ByteBookmarks.Infrastructure.Repositories;
 using ByteBookmarks.Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
@@ -87,6 +90,9 @@ builder.Services.AddSwaggerGen(opt =>
 builder.Services.AddDbContext<DataContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+// Add HttpContextAccessor
+builder.Services.AddHttpContextAccessor();
+
 // Authentication Service 
 builder.Services.AddScoped<IAuthService, AuthService>();
 
@@ -118,10 +124,11 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddScoped<IBookmarkRepository, BookmarkRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IImageRepository, ImageRepository>();
-
+builder.Services.AddScoped<ITagRepository, TagRepository>();
 // Add Services
 builder.Services.AddScoped<IImageStorageService, LocalImageStorageService>();
 builder.Services.AddSingleton<IEmailService, EmailService>();
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ImageService>();
 
 // Add MeditorR
@@ -158,6 +165,30 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+
+// Configure global exception handler
+app.UseExceptionHandler(appError =>
+{
+    appError.Run(async context =>
+    {
+        context.Response.StatusCode = context.Features.Get<IExceptionHandlerFeature>() switch
+        {
+            var feature when feature.Error is EntityNotFoundException => StatusCodes.Status404NotFound,
+            var feature when feature.Error is NotAuthorizedException => StatusCodes.Status403Forbidden,
+            _ => StatusCodes.Status500InternalServerError
+        };
+
+        context.Response.ContentType = "application/json";
+        var contextFeature = context.Features.Get<IExceptionHandlerFeature>();
+        if (contextFeature != null)
+            await context.Response.WriteAsync(new ErrorDetails
+            {
+                StatusCode = context.Response.StatusCode,
+                Message = contextFeature.Error.Message
+            }.ToString() ?? string.Empty);
+    });
+});
+
 
 // Configure CORS policy
 app.UseCors(builder.Configuration["CORS:PolicyName"]);

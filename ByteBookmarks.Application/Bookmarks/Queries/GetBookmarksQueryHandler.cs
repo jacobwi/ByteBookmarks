@@ -1,9 +1,5 @@
 #region
 
-#endregion
-
-#region
-
 using Nelibur.ObjectMapper;
 
 #endregion
@@ -29,6 +25,12 @@ public class GetBookmarksQueryHandler(IBookmarkRepository bookmarkRepository)
             if (bookmark.Image != null) dto.Image.Base64Data = await GetBase64ImageAsync(bookmark.Image.Path);
 
 
+            if (bookmark.TagBookmarks != null)
+                dto.Tags = bookmark.TagBookmarks.Select(TinyMapper.Map<BookmarkTagDto>).ToList();
+
+            if (bookmark.CategoryBookmarks != null)
+                // Manually map the Categories collection
+                dto.Categories = bookmark.CategoryBookmarks.Select(TinyMapper.Map<BookmarkCategoryDto>).ToList();
             // // Manually map the Tags collection
             // dto.Tags = bookmark.Tags.Select(tag => TinyMapper.Map<BookmarkTagDto>(tag)).ToList();
             //

@@ -1,15 +1,17 @@
 #region
 
-using System.Text.Json.Serialization;
+#endregion
+
+#region
+
+using ByteBookmarks.Application.Tags;
 
 #endregion
 
 namespace ByteBookmarks.Application.Bookmarks.Commands;
 
-public class AddTagToBookmarkCommand : IRequest<string>
+public class AddTagToBookmarkCommand : IRequest<TagDto>
 {
     public int BookmarkId { get; set; }
     public string TagName { get; set; }
-
-    [JsonIgnore] public string UserId { get; set; }
 }

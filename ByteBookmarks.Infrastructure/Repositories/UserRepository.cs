@@ -33,7 +33,7 @@ public class UserRepository(DataContext context) : IUserRepository
     public async Task DeleteUserByIdAsync(string id)
     {
         var user = await context.Users.FirstOrDefaultAsync(u => u.Id == id);
-        context.Users.Remove(user);
+        if (user != null) context.Users.Remove(user);
         await context.SaveChangesAsync();
     }
 

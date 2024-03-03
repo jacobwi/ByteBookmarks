@@ -7,6 +7,7 @@ using ByteBookmarks.Core.Entities;
 
 namespace ByteBookmarks.Server.Controllers;
 
+// TODO: Refactor
 [Authorize(Roles = "Admin")]
 [Route("api/[controller]")]
 [ApiController]

@@ -1,3 +1,9 @@
+#region
+
+using ByteBookmarks.Core.Exceptions;
+
+#endregion
+
 namespace ByteBookmarks.Application.Bookmarks.Commands;
 
 public class AddCategoryToBookmarkCommandHandler(IBookmarkRepository bookmarkRepository)
@@ -5,17 +11,22 @@ public class AddCategoryToBookmarkCommandHandler(IBookmarkRepository bookmarkRep
 {
     public async Task<string> Handle(AddCategoryToBookmarkCommand request, CancellationToken cancellationToken)
     {
-        // 1. Fetch bookmark
-        var bookmark =
-            await bookmarkRepository.GetBookmarkByIdAsync(request.BookmarkId); // Update with your repository call
+        var bookmark = await bookmarkRepository.GetBookmarkByIdAsync(request.BookmarkId);
+        if (bookmark == null) throw new EntityNotFoundException(nameof(Bookmark), request.BookmarkId);
 
-        if (bookmark == null) throw new KeyNotFoundException(bookmark.Id.ToString());
-        // 2. Add category to bookmark
-        bookmark.Categories.Add(new Category { Name = request.CategoryName });
+        var category = await bookmarkRepository.GetCategoryByIdAsync(request.CategoryId);
+        if (category == null) throw new EntityNotFoundException(nameof(Category), request.CategoryId);
 
-        // 3. Update bookmark
-        await bookmarkRepository.UpdateBookmarkAsync(bookmark, cancellationToken); // Update with your repository call
+        var categoryBookmark = new CategoryBookmark
+        {
+            BookmarkId = bookmark.Id,
+            CategoryId = category.CategoryId
+        };
 
-        return "Category added successfully";
+        bookmark.CategoryBookmarks.Add(categoryBookmark);
+
+        await bookmarkRepository.UpdateBookmarkAsync(bookmark, cancellationToken);
+
+        return "Category added to bookmark successfully";
     }
 }

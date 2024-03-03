@@ -1,35 +1,28 @@
-#region
-
-#endregion
-
 namespace ByteBookmarks.Infrastructure.Repositories;
 
 public class BookmarkRepository(DataContext context) : IBookmarkRepository
 {
     public async Task<IEnumerable<Bookmark>> GetBookmarksByUserIdAsync(string userId)
     {
-        return await context.Bookmarks
-            .Where(b => b.UserId == userId)
+        // Get user bookmarks, boookmark images,  bookmarks categories and tags
+        var bookmarks = context.Bookmarks
             .Include(i => i.Image)
-            .Include(t => t.Tags).Include(c => c.Categories) // Example: Include related tags
-            .ToListAsync();
+            .Include(t => t.TagBookmarks).ThenInclude(t => t.Tag).Include(c => c.CategoryBookmarks)
+            .Where(b => b.UserId == userId);
+
+        return await bookmarks.ToListAsync();
     }
 
     public async Task<IEnumerable<Bookmark>> GetBookmarksByUsernameAsync(string username)
     {
-        return await context.Bookmarks
-            .Where(b => b.User.Username == username)
-            .Include(i => i.Image)
-            .Include(t => t.Tags).Include(c => c.Categories) // Example: Include related tags
-            .ToListAsync();
+        return await context.Users.Where(u => u.Username == username).Include(u => u.Bookmarks)
+            .SelectMany(u => u.Bookmarks).ToListAsync();
     }
 
     public async Task<Bookmark> GetBookmarkByIdAsync(int id)
     {
-        return await context.Bookmarks
-            .Include(i => i.Image)
-            .Include(t => t.Tags).Include(c => c.Categories) // Example: Include related tags
-            .FirstOrDefaultAsync(b => b.Id == id);
+        return await context.Bookmarks.Include(i => i.Image).Include(t => t.TagBookmarks).ThenInclude(t => t.Tag)
+            .Include(c => c.CategoryBookmarks).FirstOrDefaultAsync(b => b.Id == id);
     }
 
     public async Task AddBookmarkAsync(Bookmark bookmark)
@@ -48,5 +41,10 @@ public class BookmarkRepository(DataContext context) : IBookmarkRepository
     {
         context.Bookmarks.Update(bookmark);
         await context.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task<Category> GetCategoryByIdAsync(int categoryId)
+    {
+        return await context.Categories.FirstOrDefaultAsync(c => c.CategoryId == categoryId);
     }
 }

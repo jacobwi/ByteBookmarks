@@ -15,4 +15,5 @@ public interface IBookmarkRepository
     Task AddBookmarkAsync(Bookmark bookmark);
     Task DeleteBookmarkAsync(Bookmark bookmark);
     Task UpdateBookmarkAsync(Bookmark bookmark, CancellationToken cancellationToken);
+    Task<Category> GetCategoryByIdAsync(int categoryId);
 }

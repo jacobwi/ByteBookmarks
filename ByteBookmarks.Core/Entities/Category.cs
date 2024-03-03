@@ -1,12 +1,23 @@
+#region
+
+using System.ComponentModel.DataAnnotations;
+
+#endregion
+
 namespace ByteBookmarks.Core.Entities;
 
 public class Category
 {
-    public int Id { get; set; }
-    public string Name { get; set; }
-    public string UserId { get; set; } // Foreign key to ApplicationUser
+    [Key] public int CategoryId { get; set; }
 
-    // Navigation properties
+    public string Name { get; set; }
+
+    // Foreign key for User
+    public string UserId { get; set; }
+
+    // Navigation property back to ApplicationUser
     public virtual ApplicationUser User { get; set; }
-    public virtual ICollection<Bookmark> Bookmarks { get; set; } = new List<Bookmark>();
+
+    // Navigation property for many-to-many relationship with Bookmark
+    public virtual ICollection<CategoryBookmark> CategoryBookmarks { get; set; }
 }

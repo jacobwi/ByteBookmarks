@@ -81,6 +81,7 @@ public class AuthService(IConfiguration configuration, DataContext context) : IA
             await GenerateJwtToken(user);
     }
 
+
     // Helper for password verification (replace with your hashing mechanism)
     private bool VerifyPassword(string inputPassword, string storedPasswordHash)
     {

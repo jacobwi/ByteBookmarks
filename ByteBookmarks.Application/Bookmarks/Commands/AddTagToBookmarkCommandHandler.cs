@@ -1,21 +1,58 @@
+#region
+
+using ByteBookmarks.Application.Tags;
+using ByteBookmarks.Core.Exceptions;
+
+#endregion
+
 namespace ByteBookmarks.Application.Bookmarks.Commands;
 
-public class AddTagToBookmarkCommandHandler(IBookmarkRepository bookmarkRepository)
-    : IRequestHandler<AddTagToBookmarkCommand, string>
+public class AddTagToBookmarkCommandHandler(
+    IBookmarkRepository bookmarkRepository,
+    ITagRepository tagRepository,
+    IUserService userService)
+    : IRequestHandler<AddTagToBookmarkCommand, TagDto>
 {
-    public async Task<string> Handle(AddTagToBookmarkCommand request, CancellationToken cancellationToken)
+    public async Task<TagDto> Handle(AddTagToBookmarkCommand request, CancellationToken cancellationToken)
     {
-        // 1. Fetch bookmark
-        var bookmark =
-            await bookmarkRepository.GetBookmarkByIdAsync(request.BookmarkId); // Update with your repository call
+        // GET THE CURRENT USER
+        var user = await userService.GetCurrentUserAsync();
+        if (user == null) throw new EntityNotFoundException(nameof(user));
 
-        if (bookmark == null) throw new KeyNotFoundException(bookmark.Id.ToString());
-        // 2. Add tag to bookmark
-        bookmark.Tags.Add(new Tag { Name = request.TagName, UserId = request.UserId });
+        // GET THE BOOKMARK
+        var bookmark = await bookmarkRepository.GetBookmarkByIdAsync(request.BookmarkId);
+        if (bookmark == null) throw new EntityNotFoundException(nameof(bookmark), $"{request.BookmarkId}");
 
-        // 3. Update bookmark
-        await bookmarkRepository.UpdateBookmarkAsync(bookmark, cancellationToken); // Update with your repository call
+        // GET THE TAG
+        var tag = (await tagRepository.GetUserTags(user.Id)).FirstOrDefault(t => t.Name == request.TagName);
 
-        return "Tag added successfully";
+        // IF THE TAG DOESN'T EXIST, CREATE IT
+        if (tag == null)
+        {
+            tag = new Tag
+            {
+                Name = request.TagName,
+                UserId = user.Id
+            };
+            await tagRepository.CreateTag(tag);
+        }
+
+        // ADD THE TAG TO THE BOOKMARK
+        bookmark.TagBookmarks.Add(new TagBookmark
+        {
+            BookmarkId = bookmark.Id,
+            TagId = tag.TagId
+        });
+
+        // UPDATE THE BOOKMARK
+        await bookmarkRepository.UpdateBookmarkAsync(bookmark, cancellationToken);
+
+
+        // Return the tag
+        return new TagDto
+        {
+            Id = tag.TagId,
+            Name = tag.Name
+        };
     }
 }

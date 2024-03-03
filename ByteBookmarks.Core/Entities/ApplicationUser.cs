@@ -11,5 +11,8 @@ public class ApplicationUser
     // ... other properties
     public Role Role { get; set; }
 
-    public ICollection<Bookmark> Bookmarks { get; set; }
+    // One to Many / Lazy Loading
+    public virtual ICollection<Bookmark> Bookmarks { get; set; }
+    public virtual ICollection<Tag> Tags { get; set; }
+    public virtual ICollection<Category> Categories { get; set; }
 }
