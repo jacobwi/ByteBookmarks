@@ -33,11 +33,11 @@ namespace ByteBookmarks.Infrastructure.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     Title = table.Column<string>(type: "TEXT", nullable: false),
                     URL = table.Column<string>(type: "TEXT", nullable: false),
-                    UserId = table.Column<string>(type: "TEXT", nullable: false),
                     Description = table.Column<string>(type: "TEXT", nullable: false),
                     PasswordHash = table.Column<string>(type: "TEXT", nullable: false),
-                    IsPasswordProtected = table.Column<bool>(type: "INTEGER", nullable: false),
-                    ImageId = table.Column<int>(type: "INTEGER", nullable: true)
+                    UserId = table.Column<string>(type: "TEXT", nullable: false),
+                    ImageId = table.Column<int>(type: "INTEGER", nullable: true),
+                    IsPasswordProtected = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -51,19 +51,19 @@ namespace ByteBookmarks.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Category",
+                name: "Categories",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                    CategoryId = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Name = table.Column<string>(type: "TEXT", nullable: false),
                     UserId = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Category", x => x.Id);
+                    table.PrimaryKey("PK_Categories", x => x.CategoryId);
                     table.ForeignKey(
-                        name: "FK_Category_Users_UserId",
+                        name: "FK_Categories_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -71,19 +71,19 @@ namespace ByteBookmarks.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Tag",
+                name: "Tags",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                    TagId = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Name = table.Column<string>(type: "TEXT", nullable: false),
                     UserId = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Tag", x => x.Id);
+                    table.PrimaryKey("PK_Tags", x => x.TagId);
                     table.ForeignKey(
-                        name: "FK_Tag_Users_UserId",
+                        name: "FK_Tags_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -124,62 +124,52 @@ namespace ByteBookmarks.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "BookmarkCategory",
+                name: "CategoryBookmarks",
                 columns: table => new
                 {
-                    BookmarksId = table.Column<int>(type: "INTEGER", nullable: false),
-                    CategoriesId = table.Column<int>(type: "INTEGER", nullable: false)
+                    CategoryId = table.Column<int>(type: "INTEGER", nullable: false),
+                    BookmarkId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_BookmarkCategory", x => new { x.BookmarksId, x.CategoriesId });
+                    table.PrimaryKey("PK_CategoryBookmarks", x => new { x.CategoryId, x.BookmarkId });
                     table.ForeignKey(
-                        name: "FK_BookmarkCategory_Bookmarks_BookmarksId",
-                        column: x => x.BookmarksId,
+                        name: "FK_CategoryBookmarks_Bookmarks_BookmarkId",
+                        column: x => x.BookmarkId,
                         principalTable: "Bookmarks",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_BookmarkCategory_Category_CategoriesId",
-                        column: x => x.CategoriesId,
-                        principalTable: "Category",
-                        principalColumn: "Id",
+                        name: "FK_CategoryBookmarks_Categories_CategoryId",
+                        column: x => x.CategoryId,
+                        principalTable: "Categories",
+                        principalColumn: "CategoryId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "BookmarkTag",
+                name: "TagBookmarks",
                 columns: table => new
                 {
-                    BookmarksId = table.Column<int>(type: "INTEGER", nullable: false),
-                    TagsId = table.Column<int>(type: "INTEGER", nullable: false)
+                    TagId = table.Column<int>(type: "INTEGER", nullable: false),
+                    BookmarkId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_BookmarkTag", x => new { x.BookmarksId, x.TagsId });
+                    table.PrimaryKey("PK_TagBookmarks", x => new { x.TagId, x.BookmarkId });
                     table.ForeignKey(
-                        name: "FK_BookmarkTag_Bookmarks_BookmarksId",
-                        column: x => x.BookmarksId,
+                        name: "FK_TagBookmarks_Bookmarks_BookmarkId",
+                        column: x => x.BookmarkId,
                         principalTable: "Bookmarks",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_BookmarkTag_Tag_TagsId",
-                        column: x => x.TagsId,
-                        principalTable: "Tag",
-                        principalColumn: "Id",
+                        name: "FK_TagBookmarks_Tags_TagId",
+                        column: x => x.TagId,
+                        principalTable: "Tags",
+                        principalColumn: "TagId",
                         onDelete: ReferentialAction.Cascade);
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_BookmarkCategory_CategoriesId",
-                table: "BookmarkCategory",
-                column: "CategoriesId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_BookmarkTag_TagsId",
-                table: "BookmarkTag",
-                column: "TagsId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Bookmarks_UserId",
@@ -187,9 +177,14 @@ namespace ByteBookmarks.Infrastructure.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Category_UserId",
-                table: "Category",
+                name: "IX_Categories_UserId",
+                table: "Categories",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CategoryBookmarks_BookmarkId",
+                table: "CategoryBookmarks",
+                column: "BookmarkId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Images_BookmarkId",
@@ -203,8 +198,13 @@ namespace ByteBookmarks.Infrastructure.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Tag_UserId",
-                table: "Tag",
+                name: "IX_TagBookmarks_BookmarkId",
+                table: "TagBookmarks",
+                column: "BookmarkId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tags_UserId",
+                table: "Tags",
                 column: "UserId");
         }
 
@@ -212,22 +212,22 @@ namespace ByteBookmarks.Infrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "BookmarkCategory");
-
-            migrationBuilder.DropTable(
-                name: "BookmarkTag");
+                name: "CategoryBookmarks");
 
             migrationBuilder.DropTable(
                 name: "Images");
 
             migrationBuilder.DropTable(
-                name: "Category");
+                name: "TagBookmarks");
 
             migrationBuilder.DropTable(
-                name: "Tag");
+                name: "Categories");
 
             migrationBuilder.DropTable(
                 name: "Bookmarks");
+
+            migrationBuilder.DropTable(
+                name: "Tags");
 
             migrationBuilder.DropTable(
                 name: "Users");

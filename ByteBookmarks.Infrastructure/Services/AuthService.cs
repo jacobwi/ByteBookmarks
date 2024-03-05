@@ -3,10 +3,10 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using ByteBookmarks.Application.Authentication;
+using ByteBookmarks.Application.Users;
 using ByteBookmarks.Application.Users.Commands;
 using Microsoft.IdentityModel.Tokens;
-using AuthenticationResponse = ByteBookmarks.Application.Authentication.AuthenticationResponse;
+using AuthenticationResponse = ByteBookmarks.Application.Users.DTOs.AuthenticationResponse;
 
 #endregion
 

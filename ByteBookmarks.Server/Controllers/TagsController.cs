@@ -78,6 +78,19 @@ public class TagsController(IMediator mediator, IUserService userService) : Cont
         return CreatedAtAction("GetTag", new { id = createdTag.Id }, createdTag);
     }
 
+    // GET: api/Tags?page=1&pageSize=10
+    [HttpGet("paginated")]
+    public async Task<ActionResult<IEnumerable<TagDto>>>
+        GetCategories([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+    {
+        var currentUserId = userService.GetCurrentUserId();
+        if (string.IsNullOrEmpty(currentUserId)) return Unauthorized();
+
+        var query = new GetTagsWithPaginationQuery(currentUserId, page, pageSize);
+        var tags = await mediator.Send(query);
+        return Ok(tags);
+    }
+
     // DELETE: api/Tags/5
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteTag(int id)

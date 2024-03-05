@@ -6,7 +6,9 @@ using ByteBookmarks.Core.Exceptions;
 
 namespace ByteBookmarks.Application.Bookmarks.Commands;
 
-public class AddCategoryToBookmarkCommandHandler(IBookmarkRepository bookmarkRepository)
+public class AddCategoryToBookmarkCommandHandler(
+    IBookmarkRepository bookmarkRepository,
+    ICategoryRepository categoryRepository)
     : IRequestHandler<AddCategoryToBookmarkCommand, string>
 {
     public async Task<string> Handle(AddCategoryToBookmarkCommand request, CancellationToken cancellationToken)
@@ -14,7 +16,7 @@ public class AddCategoryToBookmarkCommandHandler(IBookmarkRepository bookmarkRep
         var bookmark = await bookmarkRepository.GetBookmarkByIdAsync(request.BookmarkId);
         if (bookmark == null) throw new EntityNotFoundException(nameof(Bookmark), request.BookmarkId);
 
-        var category = await bookmarkRepository.GetCategoryByIdAsync(request.CategoryId);
+        var category = await categoryRepository.GetCategoryByIdAsync(request.CategoryId);
         if (category == null) throw new EntityNotFoundException(nameof(Category), request.CategoryId);
 
         var categoryBookmark = new CategoryBookmark

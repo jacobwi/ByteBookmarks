@@ -2,6 +2,12 @@
 
 #endregion
 
+#region
+
+using ByteBookmarks.Application.Users.DTOs;
+
+#endregion
+
 namespace ByteBookmarks.Application.Users.Commands;
 
 public class LoginUserCommandHandler(IAuthService authService)

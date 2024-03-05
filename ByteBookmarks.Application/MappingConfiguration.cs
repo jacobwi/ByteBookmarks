@@ -1,6 +1,8 @@
 #region
 
 using ByteBookmarks.Application.Bookmarks.Commands;
+using ByteBookmarks.Application.Categories.DTOs;
+using ByteBookmarks.Application.Users.DTOs;
 using Nelibur.ObjectMapper;
 
 // Assuming domain entities are in this namespace
@@ -24,6 +26,10 @@ public static class MappingConfiguration
         TinyMapper.Bind<Category, BookmarkCategoryDto>();
         TinyMapper.Bind<Tag, BookmarkTagDto>();
         TinyMapper.Bind<Image, BookmarkImageDto>();
+
+
+        TinyMapper.Bind<Category, CategoryDto>();
+
 
         // Map tagBookmark and categoryBookmark to their DTOs
         TinyMapper.Bind<TagBookmark, BookmarkTagDto>(config =>

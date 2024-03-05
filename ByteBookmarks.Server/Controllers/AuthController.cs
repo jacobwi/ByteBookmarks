@@ -1,7 +1,9 @@
 #region
 
+using ByteBookmarks.Application.Users;
+using ByteBookmarks.Application.Users.DTOs;
 using Nelibur.ObjectMapper;
-using AuthenticationResponse = ByteBookmarks.Application.Authentication.AuthenticationResponse;
+using AuthenticationResponse = ByteBookmarks.Application.Users.DTOs.AuthenticationResponse;
 
 #endregion
 

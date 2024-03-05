@@ -2,7 +2,7 @@
 
 #endregion
 
-namespace ByteBookmarks.Application.Authentication;
+namespace ByteBookmarks.Application.Users.DTOs;
 
 public class ClientUser
 {

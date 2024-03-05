@@ -5,7 +5,6 @@ using ByteBookmarks.Application.Bookmarks.Commands;
 using ByteBookmarks.Application.Bookmarks.DTOs;
 using ByteBookmarks.Application.Bookmarks.Queries;
 using ByteBookmarks.Core.Interfaces;
-using Nelibur.ObjectMapper;
 
 #endregion
 
@@ -21,6 +20,7 @@ public class BookmarksController(IMediator mediator, DataContext context, IUserS
         try
         {
             var id = User?.FindFirstValue("userId");
+            if (id == null) return Unauthorized();
             var query = new GetBookmarksQuery(id);
             var bookmarks = await mediator.Send(query);
 
@@ -40,8 +40,6 @@ public class BookmarksController(IMediator mediator, DataContext context, IUserS
     {
         var query = new GetBookmarkByIdQuery(id, User.FindFirstValue("userId"));
         var bookmark = await mediator.Send(query);
-
-        if (bookmark == null) return NotFound();
 
         return Ok(bookmark);
     }
@@ -127,10 +125,21 @@ public class BookmarksController(IMediator mediator, DataContext context, IUserS
         };
         await mediator.Send(command);
 
-        // Return createdataction
+        // Return create at action
         return CreatedAtAction("GetBookmark", new { id = bookmarkId }, NewBookmarkDto);
     }
 
+    // GET: api/Bookmarks?page=1&pageSize=10
+    [HttpGet("paginated")]
+    public async Task<ActionResult<IEnumerable<BookmarkDto>>> GetBookmarksByPageAndSize([FromQuery] int page = 1,
+        [FromQuery] int pageSize = 10)
+    {
+        var query = new GetBookmarksWithPaginationQuery(User.FindFirstValue("userId"), page, pageSize);
+        var bookmarks = await mediator.Send(query);
+        return Ok(bookmarks);
+    }
+
+    // GET: api/Bookmarks/userId
     [HttpGet("{userId?}")] // The ":int?" makes the userId parameter optional and of type int
     public async Task<ActionResult<List<BookmarkDto>>> GetUserBookmarks(string? userId)
     {
@@ -164,21 +173,5 @@ public class BookmarksController(IMediator mediator, DataContext context, IUserS
         var result = await mediator.Send(command);
 
         return result ? Ok() : Forbid();
-    }
-}
-
-public class GetBookmarksByUserIdQuery(string userId) : IRequest<List<BookmarkDto>>
-{
-    public string UserId { get; } = userId;
-}
-
-public class GetBookmarksByUserIdQueryHandler(IBookmarkRepository bookmarkRepository)
-    : IRequestHandler<GetBookmarksByUserIdQuery, List<BookmarkDto>>
-{
-    public async Task<List<BookmarkDto>> Handle(GetBookmarksByUserIdQuery request, CancellationToken cancellationToken)
-    {
-        var bookmarks = await bookmarkRepository.GetBookmarksByUserIdAsync(request.UserId);
-        var bookmarkDtos = TinyMapper.Map<List<BookmarkDto>>(bookmarks);
-        return bookmarkDtos;
     }
 }

@@ -3,6 +3,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using ByteBookmarks.Application;
+using ByteBookmarks.Application.Users;
 using ByteBookmarks.Core.Entities;
 using ByteBookmarks.Core.Exceptions;
 using ByteBookmarks.Core.Interfaces;
@@ -125,6 +126,7 @@ builder.Services.AddScoped<IBookmarkRepository, BookmarkRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IImageRepository, ImageRepository>();
 builder.Services.AddScoped<ITagRepository, TagRepository>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 // Add Services
 builder.Services.AddScoped<IImageStorageService, LocalImageStorageService>();
 builder.Services.AddSingleton<IEmailService, EmailService>();

@@ -1,6 +1,6 @@
 #region
 
-using ByteBookmarks.Application.Admin.Queries;
+using ByteBookmarks.Application.Users.Queries;
 using ByteBookmarks.Core.Entities;
 
 #endregion

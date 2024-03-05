@@ -2,7 +2,7 @@
 
 #endregion
 
-namespace ByteBookmarks.Application.Authentication.Commands;
+namespace ByteBookmarks.Application.Users.Commands;
 
 public class DeleteUserCommandHandler(IUserRepository userRepository)
     : IRequestHandler<DeleteUserCommand, Unit>

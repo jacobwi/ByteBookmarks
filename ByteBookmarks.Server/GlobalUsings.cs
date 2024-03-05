@@ -2,7 +2,6 @@
 
 #region
 
-global using ByteBookmarks.Application.Authentication;
 global using ByteBookmarks.Application.Users.Commands;
 global using ByteBookmarks.Infrastructure.Contexts;
 global using MediatR;

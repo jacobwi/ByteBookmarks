@@ -2,7 +2,7 @@
 
 #endregion
 
-namespace ByteBookmarks.Application.Admin.Queries;
+namespace ByteBookmarks.Application.Users.Queries;
 
 public class GetAllUsersQuery : IRequest<IEnumerable<ApplicationUser>>
 {

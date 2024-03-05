@@ -1,4 +1,4 @@
-namespace ByteBookmarks.Server.Controllers;
+namespace ByteBookmarks.Application.Tags.Queries;
 
 public class GetTagByIdQuery(int id) : IRequest<object?>
 {

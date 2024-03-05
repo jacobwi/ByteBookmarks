@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 #endregion
 
-namespace ByteBookmarks.Application.Authentication;
+namespace ByteBookmarks.Application.Users.DTOs;
 
 public class SignupDto
 {

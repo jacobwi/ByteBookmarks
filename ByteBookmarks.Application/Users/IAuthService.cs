@@ -2,7 +2,13 @@
 
 #endregion
 
-namespace ByteBookmarks.Application.Authentication;
+#region
+
+using ByteBookmarks.Application.Users.DTOs;
+
+#endregion
+
+namespace ByteBookmarks.Application.Users;
 
 public interface IAuthService
 {

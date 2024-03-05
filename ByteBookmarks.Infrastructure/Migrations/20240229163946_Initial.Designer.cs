@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ByteBookmarks.Infrastructure.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240228174323_Initial")]
+    [Migration("20240229163946_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -19,36 +19,6 @@ namespace ByteBookmarks.Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.2");
-
-            modelBuilder.Entity("BookmarkCategory", b =>
-                {
-                    b.Property<int>("BookmarksId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("CategoriesId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("BookmarksId", "CategoriesId");
-
-                    b.HasIndex("CategoriesId");
-
-                    b.ToTable("BookmarkCategory");
-                });
-
-            modelBuilder.Entity("BookmarkTag", b =>
-                {
-                    b.Property<int>("BookmarksId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("TagsId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("BookmarksId", "TagsId");
-
-                    b.HasIndex("TagsId");
-
-                    b.ToTable("BookmarkTag");
-                });
 
             modelBuilder.Entity("ByteBookmarks.Core.Entities.ApplicationUser", b =>
                 {
@@ -116,7 +86,7 @@ namespace ByteBookmarks.Infrastructure.Migrations
 
             modelBuilder.Entity("ByteBookmarks.Core.Entities.Category", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("CategoryId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
@@ -128,11 +98,26 @@ namespace ByteBookmarks.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.HasKey("Id");
+                    b.HasKey("CategoryId");
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Category");
+                    b.ToTable("Categories");
+                });
+
+            modelBuilder.Entity("ByteBookmarks.Core.Entities.CategoryBookmark", b =>
+                {
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("BookmarkId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("CategoryId", "BookmarkId");
+
+                    b.HasIndex("BookmarkId");
+
+                    b.ToTable("CategoryBookmarks");
                 });
 
             modelBuilder.Entity("ByteBookmarks.Core.Entities.Image", b =>
@@ -185,7 +170,7 @@ namespace ByteBookmarks.Infrastructure.Migrations
 
             modelBuilder.Entity("ByteBookmarks.Core.Entities.Tag", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("TagId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
@@ -197,41 +182,26 @@ namespace ByteBookmarks.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.HasKey("Id");
+                    b.HasKey("TagId");
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Tag");
+                    b.ToTable("Tags");
                 });
 
-            modelBuilder.Entity("BookmarkCategory", b =>
+            modelBuilder.Entity("ByteBookmarks.Core.Entities.TagBookmark", b =>
                 {
-                    b.HasOne("ByteBookmarks.Core.Entities.Bookmark", null)
-                        .WithMany()
-                        .HasForeignKey("BookmarksId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Property<int>("TagId")
+                        .HasColumnType("INTEGER");
 
-                    b.HasOne("ByteBookmarks.Core.Entities.Category", null)
-                        .WithMany()
-                        .HasForeignKey("CategoriesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
+                    b.Property<int>("BookmarkId")
+                        .HasColumnType("INTEGER");
 
-            modelBuilder.Entity("BookmarkTag", b =>
-                {
-                    b.HasOne("ByteBookmarks.Core.Entities.Bookmark", null)
-                        .WithMany()
-                        .HasForeignKey("BookmarksId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasKey("TagId", "BookmarkId");
 
-                    b.HasOne("ByteBookmarks.Core.Entities.Tag", null)
-                        .WithMany()
-                        .HasForeignKey("TagsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasIndex("BookmarkId");
+
+                    b.ToTable("TagBookmarks");
                 });
 
             modelBuilder.Entity("ByteBookmarks.Core.Entities.Bookmark", b =>
@@ -248,12 +218,31 @@ namespace ByteBookmarks.Infrastructure.Migrations
             modelBuilder.Entity("ByteBookmarks.Core.Entities.Category", b =>
                 {
                     b.HasOne("ByteBookmarks.Core.Entities.ApplicationUser", "User")
-                        .WithMany()
+                        .WithMany("Categories")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ByteBookmarks.Core.Entities.CategoryBookmark", b =>
+                {
+                    b.HasOne("ByteBookmarks.Core.Entities.Bookmark", "Bookmark")
+                        .WithMany("CategoryBookmarks")
+                        .HasForeignKey("BookmarkId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ByteBookmarks.Core.Entities.Category", "Category")
+                        .WithMany("CategoryBookmarks")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Bookmark");
+
+                    b.Navigation("Category");
                 });
 
             modelBuilder.Entity("ByteBookmarks.Core.Entities.Image", b =>
@@ -278,7 +267,7 @@ namespace ByteBookmarks.Infrastructure.Migrations
             modelBuilder.Entity("ByteBookmarks.Core.Entities.Tag", b =>
                 {
                     b.HasOne("ByteBookmarks.Core.Entities.ApplicationUser", "User")
-                        .WithMany()
+                        .WithMany("Tags")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -286,15 +275,52 @@ namespace ByteBookmarks.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("ByteBookmarks.Core.Entities.TagBookmark", b =>
+                {
+                    b.HasOne("ByteBookmarks.Core.Entities.Bookmark", "Bookmark")
+                        .WithMany("TagBookmarks")
+                        .HasForeignKey("BookmarkId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ByteBookmarks.Core.Entities.Tag", "Tag")
+                        .WithMany("TagBookmarks")
+                        .HasForeignKey("TagId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Bookmark");
+
+                    b.Navigation("Tag");
+                });
+
             modelBuilder.Entity("ByteBookmarks.Core.Entities.ApplicationUser", b =>
                 {
                     b.Navigation("Bookmarks");
+
+                    b.Navigation("Categories");
+
+                    b.Navigation("Tags");
                 });
 
             modelBuilder.Entity("ByteBookmarks.Core.Entities.Bookmark", b =>
                 {
+                    b.Navigation("CategoryBookmarks");
+
                     b.Navigation("Image")
                         .IsRequired();
+
+                    b.Navigation("TagBookmarks");
+                });
+
+            modelBuilder.Entity("ByteBookmarks.Core.Entities.Category", b =>
+                {
+                    b.Navigation("CategoryBookmarks");
+                });
+
+            modelBuilder.Entity("ByteBookmarks.Core.Entities.Tag", b =>
+                {
+                    b.Navigation("TagBookmarks");
                 });
 #pragma warning restore 612, 618
         }
