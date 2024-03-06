@@ -8,6 +8,8 @@ using ByteBookmarks.Core.Interfaces;
 
 #endregion
 
+namespace ByteBookmarks.Server.Controllers;
+
 [Authorize]
 [Route("api/[controller]")]
 [ApiController]
