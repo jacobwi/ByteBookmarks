@@ -37,12 +37,9 @@ public class AddTagToBookmarkCommandHandler(
             await tagRepository.CreateTag(tag);
         }
 
-        // ADD THE TAG TO THE BOOKMARK
-        bookmark.TagBookmarks.Add(new TagBookmark
-        {
-            BookmarkId = bookmark.Id,
-            TagId = tag.TagId
-        });
+        // ADD THE TAG TO THE BOOKMARK async
+        await bookmarkRepository.AddTagToBookmarkAsync(bookmark, tag, cancellationToken);
+
 
         // UPDATE THE BOOKMARK
         await bookmarkRepository.UpdateBookmarkAsync(bookmark, cancellationToken);

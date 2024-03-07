@@ -15,4 +15,5 @@ public interface IBookmarkRepository
     Task AddBookmarkAsync(Bookmark? bookmark);
     Task<bool> DeleteBookmarkAsync(Bookmark? bookmark);
     Task UpdateBookmarkAsync(Bookmark? bookmark, CancellationToken cancellationToken);
+    Task AddTagToBookmarkAsync(Bookmark bookmark, Tag tag, CancellationToken cancellationToken);
 }

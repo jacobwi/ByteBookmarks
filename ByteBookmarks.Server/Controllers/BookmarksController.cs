@@ -26,6 +26,8 @@ public class BookmarksController(IMediator mediator, DataContext context, IUserS
             var query = new GetBookmarksQuery(id);
             var bookmarks = await mediator.Send(query);
 
+            if (bookmarks == null) return NotFound();
+            if (bookmarks.Count() == 0) return NoContent();
 
             return Ok(bookmarks);
         }
