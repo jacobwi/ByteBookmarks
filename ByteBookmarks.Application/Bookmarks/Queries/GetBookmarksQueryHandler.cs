@@ -6,57 +6,60 @@ using Nelibur.ObjectMapper;
 
 namespace ByteBookmarks.Application.Bookmarks.Queries;
 
-public class GetBookmarksQueryHandler(IBookmarkRepository bookmarkRepository)
-    : IRequestHandler<GetBookmarksQuery, IEnumerable<BookmarkDto>>
+public class GetBookmarksQueryHandler : IRequestHandler<GetBookmarksQuery, IEnumerable<BookmarkDto>>
 {
+    private readonly IBookmarkRepository _bookmarkRepository;
+
+    public GetBookmarksQueryHandler(IBookmarkRepository bookmarkRepository)
+    {
+        _bookmarkRepository = bookmarkRepository ?? throw new ArgumentNullException(nameof(bookmarkRepository));
+    }
+
     public async Task<IEnumerable<BookmarkDto>> Handle(GetBookmarksQuery request, CancellationToken cancellationToken)
     {
-        // 1. Fetch bookmarks 
-        var bookmarks =
-            await bookmarkRepository.GetBookmarksByUserIdAsync(request.UserId); // Update with your repository call
+        var bookmarks = await _bookmarkRepository.GetBookmarksByUserIdAsync(request.UserId);
 
-        // Map each Bookmark to BookmarkDto
-        var bookmarkDtoTasks = bookmarks.Select(async bookmark =>
-        {
-            // Use TinyMapper for the direct properties
-            var dto = TinyMapper.Map<BookmarkDto>(bookmark);
-
-            // Manually map the Image property if it exists
-            if (bookmark.Image != null) dto.Image.Base64Data = await GetBase64ImageAsync(bookmark.Image.Path);
-
-
-            if (bookmark.TagBookmarks != null)
-                dto.Tags = bookmark.TagBookmarks.Select(TinyMapper.Map<BookmarkTagDto>).ToList();
-
-            if (bookmark.CategoryBookmarks != null)
-                // Manually map the Categories collection
-                dto.Categories = bookmark.CategoryBookmarks.Select(TinyMapper.Map<BookmarkCategoryDto>).ToList();
-            // // Manually map the Tags collection
-            // dto.Tags = bookmark.Tags.Select(tag => TinyMapper.Map<BookmarkTagDto>(tag)).ToList();
-            //
-            // // Manually map the Categories collection
-            // dto.Categories = bookmark.Categories.Select(category => TinyMapper.Map<BookmarkCategoryDto>(category))
-            //     .ToList();
-
-            return dto;
-        }).ToList();
-        var bookmarkDtos = await Task.WhenAll(bookmarkDtoTasks);
+        var bookmarkDtos = await Task.WhenAll(bookmarks.Select(MapBookmarkToDto));
 
         return bookmarkDtos;
     }
 
+    private async Task<BookmarkDto> MapBookmarkToDto(Bookmark bookmark)
+    {
+        var dto = TinyMapper.Map<BookmarkDto>(bookmark);
+        Console.WriteLine($"Constructing bookmark with ID [{dto.Id}]");
+
+        if (bookmark.Image != null) dto.Image.Base64Data = await GetBase64ImageAsync(bookmark.Image.Path);
+
+        // Map TagBookmarks to BookmarkTagDto
+        if (bookmark.TagBookmarks != null && bookmark.TagBookmarks.Count > 0)
+            dto.Tags = bookmark.TagBookmarks
+                .Select(tb => TinyMapper.Map<BookmarkTagDto>(tb.Tag))
+                .ToList();
+
+        // Map CategoryBookmarks to BookmarkCategoryDto
+        if (bookmark.CategoryBookmarks != null && bookmark.CategoryBookmarks.Count > 0)
+            dto.Categories = bookmark.CategoryBookmarks
+                .Select(cb => TinyMapper.Map<BookmarkCategoryDto>(cb.Category))
+                .ToList();
+
+        return dto;
+    }
+
+
     private async Task<string> GetBase64ImageAsync(string imagePath)
     {
-        // 1. Get the image from the file system or cloud storage
-        if (string.IsNullOrEmpty(imagePath)) return null;
+        try
+        {
+            if (string.IsNullOrWhiteSpace(imagePath) || !File.Exists(imagePath)) return null;
 
-        // 2. Get image bytes and convert to 64 string
-        if (!File.Exists(imagePath)) return null;
-        // 3. ReadAllBytesAsync
-        var imageBytes = await File.ReadAllBytesAsync(imagePath);
-
-        // 4. Convert the image to base64 string
-        // 5. Return the base64 string
-        return Convert.ToBase64String(imageBytes);
+            var imageBytes = await File.ReadAllBytesAsync(imagePath);
+            return Convert.ToBase64String(imageBytes);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Failed to convert image to base64: {e.Message}");
+            return null;
+        }
     }
 }

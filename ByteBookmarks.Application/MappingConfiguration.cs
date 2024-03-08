@@ -1,7 +1,10 @@
 #region
 
 using ByteBookmarks.Application.Bookmarks.Commands;
+using ByteBookmarks.Application.Categories.Commands;
 using ByteBookmarks.Application.Categories.DTOs;
+using ByteBookmarks.Application.Tags;
+using ByteBookmarks.Application.Tags.Commands;
 using ByteBookmarks.Application.Users.DTOs;
 using Nelibur.ObjectMapper;
 
@@ -21,30 +24,41 @@ public static class MappingConfiguration
         TinyMapper.Bind<SignupDto, RegisterUserCommand>();
         TinyMapper.Bind<BookmarkDto, CreateBookmarkCommand>();
         TinyMapper.Bind<BookmarkDto, UpdateBookmarkCommand>();
+        TinyMapper.Bind<CategoryDto, CreateCategoryCommand>();
+        TinyMapper.Bind<CategoryDto, UpdateCategoryCommand>();
+        TinyMapper.Bind<TagDto, CreateTagCommand>();
+        TinyMapper.Bind<TagDto, UpdateTagCommand>();
 
         // Entity to DTO mappings for simple properties
-        TinyMapper.Bind<Category, BookmarkCategoryDto>();
-        TinyMapper.Bind<Tag, BookmarkTagDto>();
+        TinyMapper.Bind<UserProfile, UserProfileDto>();
+        TinyMapper.Bind<Category, BookmarkCategoryDto>(config =>
+        {
+            config.Bind(source => source.CategoryId, target => target.Id);
+        });
+        TinyMapper.Bind<Tag, BookmarkTagDto>(config =>
+        {
+            // Assuming Tag has an Id property and BookmarkTagDto has a matching Id property
+            config.Bind(source => source.TagId, target => target.Id);
+
+            // Map other properties as needed
+        });
         TinyMapper.Bind<Image, BookmarkImageDto>();
 
-
         TinyMapper.Bind<Category, CategoryDto>();
-
-
-        // Map tagBookmark and categoryBookmark to their DTOs
         TinyMapper.Bind<TagBookmark, BookmarkTagDto>(config =>
         {
-            config.Bind(source => source.Tag.Name, target => target.Name);
+            // Assuming TagBookmark has a navigation property to Tag
             config.Bind(source => source.Tag.TagId, target => target.Id);
+            config.Bind(source => source.Tag.Name, target => target.Name);
+            // Map other properties as necessary
         });
-        TinyMapper.Bind<CategoryBookmark, BookmarkCategoryDto>(config =>
+        TinyMapper.Bind<Bookmark, BookmarkDto>(config =>
         {
-            config.Bind(source => source.Category.Name, target => target.Name);
+            config.Bind(source => source.CategoryBookmarks, target => target.Categories);
+            config.Bind(source => source.TagBookmarks, target => target.Tags);
+            // Map other properties as necessary
         });
 
-
-        // Mapping for Bookmark to BookmarkDto
-        // Ignoring complex properties to handle them manually later
-        TinyMapper.Bind<Bookmark, BookmarkDto>(config => { });
+        TinyMapper.Bind<CategoryBookmark, BookmarkCategoryDto>(config => { });
     }
 }

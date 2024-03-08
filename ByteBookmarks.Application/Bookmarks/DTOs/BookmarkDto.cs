@@ -9,7 +9,7 @@ public class NewBookmarkDto
     public int Id { get; set; }
     public string Title { get; set; }
     public string URL { get; set; }
-    public string Description { get; set; }
+    public string? Description { get; set; }
     public bool IsPasswordProtected { get; set; } = false;
 
     public string Password { get; set; } = string.Empty;
@@ -27,6 +27,6 @@ public class BookmarkDto
 
     // Related entities represented by their IDs or simplified DTOs
     public BookmarkImageDto Image { get; set; }
-    public ICollection<BookmarkTagDto> Tags { get; set; }
-    public ICollection<BookmarkCategoryDto> Categories { get; set; }
+    public ICollection<BookmarkTagDto>? Tags { get; set; }
+    public ICollection<BookmarkCategoryDto>? Categories { get; set; }
 }

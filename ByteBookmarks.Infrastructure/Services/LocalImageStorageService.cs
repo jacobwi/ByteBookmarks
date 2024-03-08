@@ -14,7 +14,7 @@ public class LocalImageStorageService : IImageStorageService
         Directory.CreateDirectory(_rootFolder); // Ensure the root folder exists
     }
 
-    public async Task SaveImageAsync(Image image, Stream imageData)
+    public async Task SaveImageAsync(Image? image, Stream imageData)
     {
         var filePath = GetFilePath(image);
 
@@ -44,7 +44,7 @@ public class LocalImageStorageService : IImageStorageService
     }
 
     // Helper to get the file path based on your image storage logic
-    private string GetFilePath(Image image)
+    private string GetFilePath(Image? image)
     {
         // Example: Store based on relationship type and further subdirectories
         var folder = Path.Combine(_rootFolder, image.RelationshipType.ToString());

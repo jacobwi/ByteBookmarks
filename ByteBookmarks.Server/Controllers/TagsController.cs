@@ -55,7 +55,8 @@ public class TagsController(IMediator mediator, IUserService userService) : Cont
         var command = new UpdateTagCommand
         {
             Id = tag.Id,
-            Name = tag.Name
+            Name = tag.Name,
+            UserId = tag.UserId
         };
 
         await mediator.Send(command);
@@ -88,7 +89,13 @@ public class TagsController(IMediator mediator, IUserService userService) : Cont
 
         var query = new GetTagsWithPaginationQuery(currentUserId, page, pageSize);
         var tags = await mediator.Send(query);
-        return Ok(tags);
+        var mappedTags = tags.Select(tag => new TagDto
+        {
+            Id = tag.TagId,
+            Name = tag.Name,
+            UserId = tag.UserId
+        });
+        return Ok(mappedTags);
     }
 
     // DELETE: api/Tags/5

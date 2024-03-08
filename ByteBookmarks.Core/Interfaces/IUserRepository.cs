@@ -20,4 +20,9 @@ public interface IUserRepository
     // Additional Methods for Enhanced Functionality
     Task<IEnumerable<ApplicationUser>> GetAllUsersAsync();
     Task<IEnumerable<ApplicationUser>> GetUsersByRoleAsync(string role);
+
+    Task<UserProfile?> GetUserProfileAsync(string userId);
+    Task<UserProfile?> UpdateUserProfileAsync(UserProfile? userProfile);
+    Task<UserProfile?> CreateUserProfileAsync(UserProfile? userProfile);
+    Task<UserProfile> DeleteUserProfileAsync(string userId);
 }

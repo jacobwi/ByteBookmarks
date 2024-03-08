@@ -11,7 +11,7 @@ public class CreateBookmarkCommandHandler(
 {
     public async Task<NewBookmarkDto> Handle(CreateBookmarkCommand request, CancellationToken cancellationToken)
     {
-        Image image = null;
+        Image? image = null;
         // Hash password if provided
         if (request.IsPasswordProtected) request.Password = BCrypt.Net.BCrypt.HashPassword(request.Password);
         // Process the image file

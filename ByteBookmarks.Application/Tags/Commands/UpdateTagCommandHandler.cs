@@ -10,7 +10,7 @@ public class UpdateTagCommandHandler(ITagRepository tagRepository) : IRequestHan
 
         entity.Name = request.Name;
 
-        tagRepository.UpdateTag(entity);
+        await tagRepository.UpdateTag(entity);
 
         return new TagDto
         {

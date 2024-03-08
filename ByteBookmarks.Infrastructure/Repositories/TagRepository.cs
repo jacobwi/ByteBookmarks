@@ -17,7 +17,7 @@ public class TagRepository(DataContext context) : ITagRepository
             .ToListAsync();
     }
 
-    public async Task<Tag> GetTag(int id, string userId)
+    public async Task<Tag> GetTag(int id, string? userId)
     {
         return await context.Tags.FirstOrDefaultAsync(t => t.TagId == id && t.UserId == userId);
     }
@@ -29,7 +29,7 @@ public class TagRepository(DataContext context) : ITagRepository
         return tag;
     }
 
-    public async Task<bool> DeleteTag(int id, string userId)
+    public async Task<bool> DeleteTag(int id, string? userId)
     {
         var tag = await context.Tags.FirstOrDefaultAsync(t => t.TagId == id && t.UserId == userId);
         context.Tags.Remove(tag);

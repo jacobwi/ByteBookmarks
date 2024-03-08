@@ -8,7 +8,7 @@ namespace ByteBookmarks.Core.Interfaces;
 
 public interface IBookmarkRepository
 {
-    Task<IEnumerable<Bookmark>> GetBookmarksByUserIdAsync(string userId, int page = 0, int pageSize = 0);
+    Task<IEnumerable<Bookmark>> GetBookmarksByUserIdAsync(string? userId, int page = 0, int pageSize = 0);
     Task<IEnumerable<Bookmark>> GetBookmarksByUsernameAsync(string username, int page = 0, int pageSize = 0);
 
     Task<Bookmark?> GetBookmarkByIdAsync(int id);

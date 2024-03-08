@@ -64,7 +64,15 @@ public class AuthService(IConfiguration configuration, DataContext context) : IA
             Role = Role.Basic
         };
 
+        // Create a new user profile for the new user
+        var newProfile = new UserProfile
+        {
+            UserId = newUser.Id
+        };
+
         context.Users.Add(newUser);
+        context.UserProfiles.Add(newProfile);
+
         await context.SaveChangesAsync();
 
         return await GenerateJwtToken(newUser);

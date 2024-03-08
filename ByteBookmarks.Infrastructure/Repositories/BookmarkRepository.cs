@@ -2,23 +2,22 @@ namespace ByteBookmarks.Infrastructure.Repositories;
 
 public class BookmarkRepository(DataContext context) : IBookmarkRepository
 {
-    public async Task<IEnumerable<Bookmark>> GetBookmarksByUserIdAsync(string userId, int page = 0, int pageSize = 0)
+    public async Task<IEnumerable<Bookmark>> GetBookmarksByUserIdAsync(string? userId, int page = 0, int pageSize = 10)
     {
-        // Get bookmarks by user id
-        if (pageSize == 0)
-            return await context.Bookmarks
-                .Where(b => b.UserId == userId)
-                .Include(b => b.TagBookmarks)
-                .Include(i => i.Image)
-                .ToListAsync();
-
-        return await context.Bookmarks
+        IQueryable<Bookmark> query = context.Bookmarks // IQueryable<Bookmark> is expected here
             .Where(b => b.UserId == userId)
-            .Skip(page * pageSize)
-            .Take(pageSize)
             .Include(b => b.TagBookmarks)
-            .Include(i => i.Image)
-            .ToListAsync();
+            .ThenInclude(tb => tb.Tag)
+            .Include(b => b.Image); // Still IQueryable<Bookmark> after Includes
+
+        if (pageSize > 0)
+        {
+            page = Math.Max(page, 0); // Ensure 'page' is not negative
+            query = query.Skip(page * pageSize).Take(pageSize); // Still IQueryable<Bookmark>
+        }
+
+        // The result of ToListAsync() can be assigned to a List<Bookmark>, which is compatible with IEnumerable<Bookmark>
+        return await query.ToListAsync();
     }
 
     public async Task<IEnumerable<Bookmark>> GetBookmarksByUsernameAsync(string username, int page = 0,

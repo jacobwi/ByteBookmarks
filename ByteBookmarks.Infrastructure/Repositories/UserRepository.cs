@@ -20,6 +20,13 @@ public class UserRepository(DataContext context) : IUserRepository
     public async Task<ApplicationUser> CreateUserAsync(ApplicationUser user)
     {
         context.Users.Add(user);
+
+        // Create a user profile for the new user
+        var userProfile = new UserProfile
+        {
+            UserId = user.Id
+        };
+        context.UserProfiles.Add(userProfile);
         await context.SaveChangesAsync();
         return user;
     }
@@ -64,5 +71,34 @@ public class UserRepository(DataContext context) : IUserRepository
         return await context.Users
             .Where(u => u.Role.ToString() == role)
             .ToListAsync();
+    }
+
+    public async Task<UserProfile?> GetUserProfileAsync(string userId)
+    {
+        return await context.UserProfiles
+            .FirstOrDefaultAsync(u => u.UserId == userId);
+    }
+
+    public async Task<UserProfile?> UpdateUserProfileAsync(UserProfile? userProfile)
+    {
+        context.UserProfiles.Update(userProfile);
+        await context.SaveChangesAsync();
+        return userProfile;
+    }
+
+    public async Task<UserProfile?> CreateUserProfileAsync(UserProfile? userProfile)
+    {
+        context.UserProfiles.Add(userProfile);
+        await context.SaveChangesAsync();
+        return userProfile;
+    }
+
+    public async Task<UserProfile> DeleteUserProfileAsync(string userId)
+    {
+        var userProfile = await context.UserProfiles
+            .FirstOrDefaultAsync(u => u.UserId == userId);
+        if (userProfile != null) context.UserProfiles.Remove(userProfile);
+        await context.SaveChangesAsync();
+        return userProfile;
     }
 }

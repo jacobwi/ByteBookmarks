@@ -9,7 +9,8 @@ public class ImageService(
     IImageRepository imageRepository,
     IConfiguration configuration)
 {
-    public async Task<Image> UploadImageAsync(string relationshipType, string userId, Stream imageData, string fileName,
+    public async Task<Image?> UploadImageAsync(string relationshipType, string userId, Stream imageData,
+        string fileName,
         string contentType)
     {
         // Basic validation

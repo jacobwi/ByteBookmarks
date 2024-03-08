@@ -22,4 +22,44 @@ public class UserService(IHttpContextAccessor httpContextAccessor, IUserReposito
         var userIdClaim = httpContextAccessor.HttpContext?.User?.FindFirstValue("userId");
         return userIdClaim;
     }
+
+    public bool IsAdmin()
+    {
+        return httpContextAccessor.HttpContext?.User?.IsInRole("Admin") ?? false;
+    }
+
+    public bool IsModerator()
+    {
+        return httpContextAccessor.HttpContext?.User?.IsInRole("Moderator") ?? false;
+    }
+
+    public bool IsUser()
+    {
+        return httpContextAccessor.HttpContext?.User?.IsInRole("User") ?? false;
+    }
+
+    public bool IsGuest()
+    {
+        return httpContextAccessor.HttpContext?.User?.IsInRole("Guest") ?? false;
+    }
+
+    public async Task<UserProfile?> GetUserProfileAsync(string userId)
+    {
+        return await userRepository.GetUserProfileAsync(userId);
+    }
+
+    public async Task<UserProfile?> UpdateUserProfileAsync(UserProfile? userProfile)
+    {
+        return await userRepository.UpdateUserProfileAsync(userProfile);
+    }
+
+    public async Task<UserProfile?> CreateUserProfileAsync(UserProfile? userProfile)
+    {
+        return await userRepository.CreateUserProfileAsync(userProfile);
+    }
+
+    public async Task<UserProfile> DeleteUserProfileAsync(string userId)
+    {
+        return await userRepository.DeleteUserProfileAsync(userId);
+    }
 }

@@ -19,23 +19,14 @@ public class BookmarksController(IMediator mediator, DataContext context, IUserS
     [HttpGet]
     public async Task<ActionResult<IEnumerable<BookmarkDto>>> GetBookmarks()
     {
-        try
-        {
-            var id = User?.FindFirstValue("userId");
-            if (id == null) return Unauthorized();
-            var query = new GetBookmarksQuery(id);
-            var bookmarks = await mediator.Send(query);
+        var id = User?.FindFirstValue("userId");
+        if (id == null) return Unauthorized();
+        var query = new GetBookmarksQuery(id);
+        var bookmarks = await mediator.Send(query);
 
-            if (bookmarks == null) return NotFound();
-            if (bookmarks.Count() == 0) return NoContent();
+        if (!bookmarks.Any()) return NoContent();
 
-            return Ok(bookmarks);
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            throw;
-        }
+        return Ok(bookmarks);
     }
 
     // GET: api/Bookmarks/5
@@ -144,7 +135,7 @@ public class BookmarksController(IMediator mediator, DataContext context, IUserS
     }
 
     // GET: api/Bookmarks/userId
-    [HttpGet("{userId?}")] // The ":int?" makes the userId parameter optional and of type int
+    [HttpGet($"{{{nameof(userId)}?}}")] // The ":int?" makes the userId parameter optional and of type int
     public async Task<ActionResult<List<BookmarkDto>>> GetUserBookmarks(string? userId)
     {
         var currentUserId = userService.GetCurrentUserId();

@@ -49,7 +49,6 @@ namespace ByteBookmarks.Infrastructure.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<int?>("ImageId")
@@ -59,7 +58,6 @@ namespace ByteBookmarks.Infrastructure.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("PasswordHash")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Title")
@@ -201,6 +199,30 @@ namespace ByteBookmarks.Infrastructure.Migrations
                     b.ToTable("TagBookmarks");
                 });
 
+            modelBuilder.Entity("ByteBookmarks.Core.Entities.UserProfile", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("AvatarId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime?>("DateOfBirth")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("FirstName")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("UserId");
+
+                    b.HasIndex("AvatarId");
+
+                    b.ToTable("UserProfiles");
+                });
+
             modelBuilder.Entity("ByteBookmarks.Core.Entities.Bookmark", b =>
                 {
                     b.HasOne("ByteBookmarks.Core.Entities.ApplicationUser", "User")
@@ -291,11 +313,31 @@ namespace ByteBookmarks.Infrastructure.Migrations
                     b.Navigation("Tag");
                 });
 
+            modelBuilder.Entity("ByteBookmarks.Core.Entities.UserProfile", b =>
+                {
+                    b.HasOne("ByteBookmarks.Core.Entities.Image", "Avatar")
+                        .WithMany()
+                        .HasForeignKey("AvatarId");
+
+                    b.HasOne("ByteBookmarks.Core.Entities.ApplicationUser", "ApplicationUser")
+                        .WithOne("Profile")
+                        .HasForeignKey("ByteBookmarks.Core.Entities.UserProfile", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUser");
+
+                    b.Navigation("Avatar");
+                });
+
             modelBuilder.Entity("ByteBookmarks.Core.Entities.ApplicationUser", b =>
                 {
                     b.Navigation("Bookmarks");
 
                     b.Navigation("Categories");
+
+                    b.Navigation("Profile")
+                        .IsRequired();
 
                     b.Navigation("Tags");
                 });
@@ -304,8 +346,7 @@ namespace ByteBookmarks.Infrastructure.Migrations
                 {
                     b.Navigation("CategoryBookmarks");
 
-                    b.Navigation("Image")
-                        .IsRequired();
+                    b.Navigation("Image");
 
                     b.Navigation("TagBookmarks");
                 });

@@ -14,3 +14,5 @@ public class GetUserByIdQuery(string userId) : IRequest<ClientUser>
 {
     public string UserId { get; set; } = userId;
 }
+
+// Handlers

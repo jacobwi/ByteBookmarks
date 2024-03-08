@@ -16,4 +16,22 @@ public interface IUserService
 
     Task<ApplicationUser> GetCurrentUserAsync();
     string? GetCurrentUserId();
+
+    // Is the user an admin?
+    bool IsAdmin();
+
+    // Is the user a moderator?
+    bool IsModerator();
+
+    // Is the user a regular user?
+    bool IsUser();
+
+    // Is the user a guest?
+    bool IsGuest();
+
+
+    Task<UserProfile?> GetUserProfileAsync(string userId);
+    Task<UserProfile?> UpdateUserProfileAsync(UserProfile? userProfile);
+    Task<UserProfile?> CreateUserProfileAsync(UserProfile? userProfile);
+    Task<UserProfile> DeleteUserProfileAsync(string userId);
 }
