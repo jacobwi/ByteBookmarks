@@ -15,7 +15,6 @@ public class ApplicationUser
 
     public string Email { get; set; }
 
-    // ... other properties
     public Role Role { get; set; }
 
     // One to Many / Lazy Loading

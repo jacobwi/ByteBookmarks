@@ -27,9 +27,9 @@ public class GetBookmarksQueryHandler : IRequestHandler<GetBookmarksQuery, IEnum
     private async Task<BookmarkDto> MapBookmarkToDto(Bookmark bookmark)
     {
         var dto = TinyMapper.Map<BookmarkDto>(bookmark);
-        Console.WriteLine($"Constructing bookmark with ID [{dto.Id}]");
 
-        if (bookmark.Image != null) dto.Image.Base64Data = await GetBase64ImageAsync(bookmark.Image.Path);
+        if (bookmark.Image != null)
+            dto.Image.Base64Data = await bookmark.Image.GetBase64ImageAsync(bookmark.Image.Path);
 
         // Map TagBookmarks to BookmarkTagDto
         if (bookmark.TagBookmarks != null && bookmark.TagBookmarks.Count > 0)
@@ -44,22 +44,5 @@ public class GetBookmarksQueryHandler : IRequestHandler<GetBookmarksQuery, IEnum
                 .ToList();
 
         return dto;
-    }
-
-
-    private async Task<string> GetBase64ImageAsync(string imagePath)
-    {
-        try
-        {
-            if (string.IsNullOrWhiteSpace(imagePath) || !File.Exists(imagePath)) return null;
-
-            var imageBytes = await File.ReadAllBytesAsync(imagePath);
-            return Convert.ToBase64String(imageBytes);
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine($"Failed to convert image to base64: {e.Message}");
-            return null;
-        }
     }
 }

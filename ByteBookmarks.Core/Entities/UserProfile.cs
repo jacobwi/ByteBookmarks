@@ -9,7 +9,9 @@ namespace ByteBookmarks.Core.Entities;
 
 public class UserProfile
 {
-    [Key] [ForeignKey("ApplicationUser")] public string UserId { get; set; }
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.None)] // Indicates the PK is not database-generated
+    public string UserId { get; set; }
 
     public string? FirstName { get; set; }
     public string? LastName { get; set; }
@@ -17,10 +19,11 @@ public class UserProfile
 
     [MaxLength(500)] public string? Bio { get; set; }
 
-    // foreign key to Image
-    public int AvatarId { get; set; }
-    public Image? Avatar { get; set; }
+    public int? AvatarId { get; set; } // Made nullable in case a UserProfile might not have an Avatar
+
+    [ForeignKey("AvatarId")] public virtual Image? Avatar { get; set; }
 
     // Navigation property back to ApplicationUser
-    public virtual ApplicationUser ApplicationUser { get; set; }
+    // The ForeignKey attribute here specifies which property is the foreign key to ApplicationUser
+    [ForeignKey("UserId")] public virtual ApplicationUser ApplicationUser { get; set; }
 }

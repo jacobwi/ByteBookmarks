@@ -76,6 +76,7 @@ public class UserRepository(DataContext context) : IUserRepository
     public async Task<UserProfile?> GetUserProfileAsync(string userId)
     {
         return await context.UserProfiles
+            .Include(u => u.Avatar)
             .FirstOrDefaultAsync(u => u.UserId == userId);
     }
 
