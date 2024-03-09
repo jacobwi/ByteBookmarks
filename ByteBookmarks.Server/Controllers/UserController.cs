@@ -77,4 +77,25 @@ public class UserController(IMediator mediator) : ControllerBase
             return BadRequest(ex.Message); // Or a more informative error response
         }
     }
+
+    // Put api/User/{userId}/profile/avatar
+    [HttpPut($"{{{nameof(userId)}}}/profile/avatar")]
+    public async Task<ActionResult> UploadAvatar(string userId, [FromForm] IFormFile avatar)
+    {
+        try
+        {
+            var id = User?.FindFirstValue("userId");
+            if (id == null) return Unauthorized();
+
+            if (id != userId) return Unauthorized();
+
+            var command = new UploadAvatarForUserCommand(userId, avatar);
+            var response = await mediator.Send(command);
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message); // Or a more informative error response
+        }
+    }
 }

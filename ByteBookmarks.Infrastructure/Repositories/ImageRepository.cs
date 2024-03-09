@@ -13,10 +13,11 @@ public class ImageRepository(DataContext context) : IImageRepository
             .FirstOrDefaultAsync();
     }
 
-    public async Task AddAsync(Image? image)
+    public async Task<int> AddAsync(Image? image)
     {
         await context.Images.AddAsync(image);
         await context.SaveChangesAsync();
+        return image.Id;
     }
 
     public async Task DeleteAsync(Image? image)

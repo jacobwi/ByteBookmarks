@@ -15,6 +15,10 @@ public class UserProfile
     public string? LastName { get; set; }
     public DateTime? DateOfBirth { get; set; }
 
+    [MaxLength(500)] public string? Bio { get; set; }
+
+    // foreign key to Image
+    public int AvatarId { get; set; }
     public Image? Avatar { get; set; }
 
     // Navigation property back to ApplicationUser

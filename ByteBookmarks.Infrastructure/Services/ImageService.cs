@@ -7,9 +7,9 @@ namespace ByteBookmarks.Infrastructure.Services;
 public class ImageService(
     IImageStorageService storageService,
     IImageRepository imageRepository,
-    IConfiguration configuration)
+    IConfiguration configuration) : IImageService
 {
-    public async Task<Image?> UploadImageAsync(string relationshipType, string userId, Stream imageData,
+    public async Task<Image?> UploadImageAsync(RelationshipType relationshipType, string userId, Stream imageData,
         string fileName,
         string contentType)
     {
@@ -19,7 +19,7 @@ public class ImageService(
         var image = new Image
         {
             Name = fileName,
-            RelationshipType = (RelationshipType)Enum.Parse(typeof(RelationshipType), relationshipType),
+            RelationshipType = relationshipType,
             UserId = userId,
             ContentType = contentType,
             StoreType = Enum.Parse<StorageType>(configuration["Storage:StorageType"]),
@@ -33,6 +33,16 @@ public class ImageService(
         await imageRepository.AddAsync(image);
 
         return image;
+    }
+
+    public Task DeleteImageAsync(string imageId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<Image?> GetImageAsync(string imageId)
+    {
+        throw new NotImplementedException();
     }
 
 

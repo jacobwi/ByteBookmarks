@@ -11,12 +11,12 @@ namespace ByteBookmarks.Server.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class CategoryController : ControllerBase
+public class CategoriesController : ControllerBase
 {
     private readonly IMediator _mediator;
     private readonly IUserService _userService;
 
-    public CategoryController(IMediator mediator, IUserService userService)
+    public CategoriesController(IMediator mediator, IUserService userService)
     {
         _mediator = mediator;
         _userService = userService;

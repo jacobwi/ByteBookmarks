@@ -131,7 +131,7 @@ builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IImageStorageService, LocalImageStorageService>();
 builder.Services.AddSingleton<IEmailService, EmailService>();
 builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<ImageService>();
+builder.Services.AddScoped<IImageService, ImageService>();
 
 // Add MeditorR
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(IAuthService).Assembly));

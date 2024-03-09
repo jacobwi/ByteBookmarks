@@ -43,6 +43,8 @@ public static class MappingConfiguration
             // Map other properties as needed
         });
         TinyMapper.Bind<Image, BookmarkImageDto>();
+        TinyMapper.Bind<Image, UserProfileImageDto>();
+
 
         TinyMapper.Bind<Category, CategoryDto>();
         TinyMapper.Bind<TagBookmark, BookmarkTagDto>(config =>
@@ -61,4 +63,8 @@ public static class MappingConfiguration
 
         TinyMapper.Bind<CategoryBookmark, BookmarkCategoryDto>(config => { });
     }
+}
+
+public class UserProfileImageDto
+{
 }
